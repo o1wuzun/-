@@ -1,0 +1,18 @@
+{
+  "file": "F:\\社区\\算法学习目标驱动社区平台开题报告.docx",
+  "counts": {
+    "high": 0,
+    "medium": 1,
+    "low": 0
+  },
+  "findings": [
+    {
+      "severity": "medium",
+      "kind": "table_no_header_row",
+      "message": "Table first row is not marked as header (w:tblHeader missing)",
+      "context": {
+        "part": "word/document.xml"
+      }
+    }
+  ]
+}

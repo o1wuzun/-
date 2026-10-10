@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>算法同行 · 学习社区</title><link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<aside><a class="brand" href="/">◈ <span>算法同行<small>ALGO TOGETHER</small></span></a><div class="side-label">学习空间</div><button class="nav active" data-page="groups">◇ 群组大厅</button><button class="nav" data-page="learning">▦ 我的学习</button><button class="nav" data-page="discussion">☷ 群组讨论</button><button class="nav" data-page="members">◎ 联网成员</button><div class="side-bottom"><span class="dot"></span> 局域网协作原型<small>一起理解，而不只是刷题。</small></div></aside>
+<main><header><span id="breadcrumb">社区 / 群组大厅</span><div><span id="account">尚未登录</span><button id="auth-button" class="secondary">登录 / 注册</button><button id="logout" class="secondary hidden">退出登录</button></div></header>
+<section class="hero"><div class="eyebrow">LEARN · SHARE · GROW</div><h1 id="heading">找到你的算法同伴</h1><p id="subtitle">加入一个学习群组，把每天的一点进步，汇成一起成长的路径。</p></section>
+<div id="selected" class="selected hidden"><span>当前群组：<strong id="selected-name"></strong></span><span id="sync-state">成员同步中</span><button id="switch" class="secondary">切换群组</button></div>
+<section id="groups" class="page"><div class="section-head"><h2>学习群组 <span id="group-count"></span></h2><button id="create-group">＋ 创建群组</button></div><div id="group-grid" class="grid"></div><div class="note">联网方式：同一局域网的成员访问群主启动的服务地址，使用联网密钥加入。当前采用单服务分群隔离，尚未实现主机之间的点对点连接。</div></section>
+<section id="learning" class="page hidden"><div class="section-head"><h2>我的目标</h2><button id="create-goal">＋ 新建学习目标</button></div><div id="goal-grid" class="grid"></div><div id="goal-detail"></div></section>
+<section id="discussion" class="page hidden"><div class="section-head"><h2>交流与复盘</h2><button id="publish">＋ 发布讨论</button></div><div id="discussion-list"></div></section>
+<section id="members" class="page hidden"><div class="section-head"><h2>同群组成员</h2><button id="refresh-members" class="secondary">刷新状态</button></div><p class="muted">每 30 秒同步一次；超过 90 秒未收到心跳视为离线。</p><div id="member-list"></div></section>
+<footer>算法同行 · 目标驱动的算法学习社区 <a href="/docs" target="_blank">接口文档 ↗</a></footer></main>
+<dialog id="modal"><div class="modal-head"><h2 id="modal-title"></h2><button id="close-modal" class="secondary" type="button" aria-label="关闭">✕</button></div><form id="modal-form"><div id="modal-fields"></div><p id="form-error" role="alert"></p><button id="modal-submit" type="submit">确认</button></form></dialog><div id="toast" role="status" class="hidden"></div><script src="/static/app.js" defer></script></body></html>

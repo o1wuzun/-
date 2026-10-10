@@ -1,0 +1,2280 @@
+{
+  "sections": [
+    {
+      "page_width": 8.268055555555556,
+      "page_height": 11.693055555555556,
+      "left": 1.25,
+      "right": 1.25,
+      "top": 1.0,
+      "bottom": 1.0,
+      "header": 0.5909722222222222,
+      "footer": 0.6888888888888889
+    }
+  ],
+  "paras": [
+    {
+      "i": 0,
+      "text": "",
+      "style": "Normal",
+      "align": "None",
+      "before": null,
+      "after": null,
+      "line": 1.0,
+      "runs": []
+    },
+    {
+      "i": 1,
+      "text": "临沂大学本科毕业论文（设计）开题报告",
+      "style": "Normal",
+      "align": "CENTER (1)",
+      "before": null,
+      "after": 15.6,
+      "line": 304800,
+      "runs": [
+        {
+          "text": "临沂",
+          "font": "黑体",
+          "size": 16.0,
+          "bold": true
+        },
+        {
+          "text": "大学",
+          "font": "黑体",
+          "size": 16.0,
+          "bold": true
+        },
+        {
+          "text": "本科毕业论文（设计）开题报告",
+          "font": "黑体",
+          "size": 16.0,
+          "bold": true
+        }
+      ]
+    },
+    {
+      "i": 2,
+      "text": "",
+      "style": "Normal",
+      "align": "None",
+      "before": null,
+      "after": null,
+      "line": 1.0,
+      "runs": []
+    },
+    {
+      "i": 3,
+      "text": "",
+      "style": "Normal",
+      "align": "None",
+      "before": null,
+      "after": null,
+      "line": null,
+      "runs": []
+    },
+    {
+      "i": 4,
+      "text": "",
+      "style": "Normal",
+      "align": "None",
+      "before": null,
+      "after": null,
+      "line": 1.5,
+      "runs": []
+    }
+  ],
+  "tables": [
+    {
+      "rows": 9,
+      "cols": 6,
+      "cells": [
+        {
+          "ri": 0,
+          "ci": 0,
+          "text": "姓名",
+          "width": 0.64375,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "姓名",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 0,
+          "ci": 1,
+          "text": "郭梦杰",
+          "width": 1.0555555555555556,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "郭梦杰",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 0,
+          "ci": 2,
+          "text": "学号",
+          "width": 0.5166666666666667,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "学号",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 0,
+          "ci": 3,
+          "text": "201909280107",
+          "width": 1.4875,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "201909280107",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 0,
+          "ci": 4,
+          "text": "专业",
+          "width": 0.5166666666666667,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "专业",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 0,
+          "ci": 5,
+          "text": "软件工程(校企合作)",
+          "width": 1.8944444444444444,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "软件工程(校企合作)",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 1,
+          "ci": 0,
+          "text": "题目",
+          "width": 0.64375,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "题目",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 1,
+          "ci": 1,
+          "text": "临大校园微快递",
+          "width": 5.470833333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "CENTER (1)",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "临大校园微快递",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 2,
+          "ci": 0,
+          "text": "选题意义、研究现状及可行性分析\n选题意义：\n随着互联网应用的不断普及，快递业不断发展并逐渐渗透到社会行业的各个领域。校园网络购物群体不断增加，便捷和实惠的网购深得大学生们喜爱，网购慢慢的成为了大学生日常生活的重要组成部分，这也使得每天进出校园的快递数量巨大，由于大学生上下课时间集中，快递发放时间分配很难协调，造成高峰时期拥挤，同时快递堆放随意，快递数量又多，大学生在一堆杂乱的快递中找到自己的快递，需要花费大量时间，对时间紧迫的大学生来说十分不便。同时在当前疫情大环境下，学校严格限制外来人员的进入，这也使得校园内的快递配送服务难以真正的建立起来。\n为了应对高校校园快递“最后一公里”难题，计划开发一款校园快递服务系统，通过信息化自动化的手段来提高校园快递的收发效率，规范校园快递市场，在校园代取快递业务中，由于需要接单员进行快递配送，也为大学生提供了勤工俭学的途径。大学生可以自由地分配时间，学校依旧可以保持其一定的封闭性。\n\n研究现状：\n目前多数大学校园快递的运作仍然是采用传统的“收发室”或分散式代理点的操作方式，仍难以满足“适时”、“即时”的快件要求，快递分发到校内，只能依靠人工一件一件的分类再查询，学生无法知道具体快递的配送时间，无法安排自己的行程，造成下课时间快递点拥挤不堪，上课时间快递点无人问津的局面。对于快递公司来说，每一件快递需要标注姓名，根据大小分类，再根据自己的分类找到对应的快递，这样消耗了大量的人力资源，做了很多重复的工作。\n从以上这些问题不难看出，高校快递服务业务处在初级阶段，还有许多需要完善的地方，因此市场发展潜力巨大。\n可行性分析：\n进行可行性分析可以确定项目过程中可能遇到的问题以及找出解决这些问题的方法，判断是否还有进行深入研究的必要,以及有没有进行深入研究的前提条件，最终尽可能合理利用现有资源，服可能小的代价来完成项目，甚至取得更大的成果。可行性分析不仅包括完成项目的可能性，还包括广泛社会意义中该项研究的必要性以及合理性,而且应该从经济可行性、技术可行性和操作可行性三个方面进行分析。\n经济可行性\n对于校园快递管理系统来说，其对于关键硬件的需求小，软件环境的要求低，系统实现与运行的主要成本在于开发和维护，不会有过多的金钱支出。系统一旦投入使用，其带来经济效益能与系统支出处于持平状态，因此在经济上是可行的。\n技术可行性\n在B/S结构下，用户接口是通过WWW浏览器来实现的，前端只是实现极少部分的事务逻辑,以减少前端的负荷,提高前端运行速度，事务逻辑主要在服务器端实现，服务器运行速度要快得多，最后只返回前端需要的数据。如此便极大地简化了网络终端计算机的负荷，降低了信息系统的维护与升级所需成本，减少了工作量,从而降低了用户的总体成本。本校园快递信息管理系统管理员端采用Vue作为前端开发技术，用SpringBoot作为后端的开发框架，用户端采用微信小程序，以确保用户可以在手机上运行此软件。\nVue是一种渐进式JavaScript框架，完美融合了第三方插件和UI组件库，Vue无需开发人员直接操作DOM节点，就可以改变页面渲染内容，在应用开发者具有一定的HTML、CSS、JavaScript的基础上，能够快速上手，开发出优雅、简洁的应用程序模块。\nSpring Boot是一个构建在Spring框架顶部的项目。它提供了一种更简单、更快捷的方法来设置、配置和运行简单和基于Web的应用程序。\n随着技术的发展，大数据技术变得越来越成熟。对于快递服务平台而言，微信小程序在微信的基础用户上更易推广，不需要去应用商店下载。在微信平台的审核下，微信小程序更具有可靠性。微信开发文档给微信小程序提供了更多技术支持。\n因此从技术方面来讲临大校园微快递是可行的。\n操作可行性\n校园快递信息管理系统正式运营后，用户可以直接在浏览器上进行访问，由\n于本系统界面做的清新简洁，各功能清晰明了，也是原有快递管理信息系统的主\n要功能延续版本。",
+          "width": 6.114583333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "选题意义、研究现状及",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "可行性分析",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "选题意义：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "随着互联网应用的不断普及，快递业不断发展并逐渐渗透到社会行业的各个领域。校园网络购物群体不断增加，便捷和实惠",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "的网购深得",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "大学生们喜爱，",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "网购慢慢的",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "成为了大学生日常生活的重要组成部分，这也使得每天进出校园的快递数量巨大，由于大学生上下课时间集中，快递发放时间分配很难协调，造成高峰时期拥挤，同时快递堆放随意，快递数量又多，大学生在一堆杂乱的快递中找到自己的快递，需要花费大量时间，对时间紧迫的大学生来说十分不便。同时在当前疫情大环境下，学校严格限制外来人员的进入，这也使得校园内的快递配送服务难以真正的建立起来。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "为了应对高校校园快递“最后一公里”难题",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "，",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "计划开发一款校园快递服务系统，通过信息化自动化的手段来提高校园快递的收发效率，规范校园快递市场，在校园代取快递业务中，由于需要接单员进行快递配送，也为大学生提供了勤工俭学的途径。大学生可以自由地分配时间，",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "学校依旧可以保持其一定的封闭性",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": []
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "研究现状：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "目前多数大学校园快递的运作仍然是采用传统的“收发室”或分散式代理点的操作方式，仍难以满足“适时”、“即时”的快件要求，快递分发到校内，只能依靠人工一件一件的分类再查询，学生无法知道具体快递的配送时间，无法安排自己的行程，造成下课时间快递点拥挤不堪，上课时间快递点无人问津的局面。对于快递公司来说，每一件快递需要标注姓名，根据大小分类，再根据自己的分类找到对应的快递，这样消耗了大量的人力资源，做了很多重复的工作。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "从以上这些问题不难看出，高校快递服务业务处在初级阶段，还有许多需要完善的地方，因此市场发展潜力巨大。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "可行性分析：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "进行可行性分析可以确定项目过程中可能遇到的问题以及找出解决这些问题的方法，判断是否还有进行深入研究的必要",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": ",",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "以及有没有进行深入研究的前提条件，最终尽可能合理利用现有资源，",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "服可能",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "小的代价来完成项目，甚至取得更大的成果。可行性分析不仅包括完成项目的可能性，还包括广泛社会意义中该项研究的必要性以及合理性",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": ",",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "而且应该从经济可行性、技术可行性和操作可行性三个方面进行分析。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "经济可行性",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "对于校园快递管理系统来说，其对于关键硬件的需求小，软件环境的要求低，系统实现与运行的主要成本在于开发和维护，不会有过多的金钱支出。系统一旦投入使用，其带来经济效益能与系统支出处于持平状态，因此在经济上是可行的。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "技术可行性",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "在",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "B/S",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "结构下，用户接口是通过",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "WWW",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "浏览器来实现的，前端只是实现极少部分的事务逻辑",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": ",",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "以减少前端的负荷",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": ",",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "提高前端运行速度，事务逻辑主要在服务器端实现，服务器运行速度要快得多，最后只返回前端需要的数据。如此便极大地简化了网络终端计算机的负荷，降低了信息系统的维护与升级所需成本，减少了工作量",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": ",",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "从而降低了用户的总体成本。本校园快递信息管理系统管理员",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "端采用",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "Vue",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "作为前端开发技术，用",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "SpringBoot",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "作为后端的开发框架，用户",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "端采用微信",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "小程序，以确保用户可以在手机上运行此软件。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "Vue",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "是一种渐进式",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "JavaScript",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "框架，完美融合了第三方插件和",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "UI",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "组件库，",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "Vue",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "无需开发人员直接操作",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "DOM",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "节点，就可以改变页面渲染内容，在应用开发者具有一定的",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "HTML",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "、",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "CSS",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "、",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "JavaScript",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "的基础上，能够快速上手，开发出优雅、简洁的应用程序模块。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "Spring Boot",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "是一个构建在",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "Spring",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "框架顶部的项目。它提供了一种更简单、更快捷的方法来设置、配置和运行简单和基于",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "Web",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "的应用程序。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "随着技术的发展，",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "技术变得越来越成熟。对于",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "快递服务平台",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "而言，",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "微信小",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "程序",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "在微信的",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "基础用户上更易推广，不需要去应用商店下载。在",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "微信平台",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "的审核下，",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "微信小",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "程序更具有可靠性。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "微信开发文档给微信",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "小程序提供了更多技术支持。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "因此从技术方面来讲临大",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "校园微快递是可行的。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "操作可行性",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "校园快递信息管理系统正式运营后，用户可以直接在浏览器上进行访问，由",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "于本系统界面做的清新简洁，各功能清晰明了，也是原有快递管理信息系统的主",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "要功能延续版本。",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 3,
+          "ci": 0,
+          "text": "基本内容、目标、拟采用的方案\n基本内容：\n    针对校园快递的特点和需求，设计采用Vue、MyBatis、微信小程序等相关技术基SpringBoot设计的校园快递服务平台。系统具有专门的供用户使用的前台和专门供校园跑腿服务系统人员使用的后台。前台有用户注册验证、下发订单、查看订单、撤销订单、意见反馈等功能,为用户提供代取和派送快递的渠道,实时为下单用户和接单用户提供订单详情,实现了用户的快递代取需求。后台有系统管理人员注册登录、订单管理、留言管理、骑手管理、顾客管理、以及派送路线分配设计，该平台具有较强的针对性、实用性和便利性,有效地实现了校园快递的代取。 \n\n目标：\n1.用户操作\n用户信息管理模块：登录、注册、找回密码、修改用户的个人信息\n快递信息管理模块：选择代取或代寄快递，并填写相关信息\n留言模块：订单评价、询问服务信息\n2.管理员操作\n    （1）管理员信息管理：登录、注册、找回密码、修改、查询(浏览)管理员信息\n（2）快递订单管理：修改订单状态、删除失效、错误订单、查询(浏览)全部或所需订单信息\n（3）留言信息管理：查询(浏览)用户留言、回复用户留言\n（4）路线规划管理：通过适当的算法为骑手分配最佳配送路线\n（5）骑手信息管理：增加新骑手、修改骑手信息、删除离职骑手、查询(浏览)全部或相关骑手信息\n（6）用户信息管理：查询(浏览)全部或所需用户信息\n拟采用的方案：\n1.前端：Vue框架。\n2.后台：Spring Boot+Mybatis框架。\n3.数据库：mysql。\n4.IDE环境：IDEA。\n5.运行环境：java jdk 1.8。\n6.界面要求：界面美观、设计合理、符合人性化设计。\n7.系统要求：用户使用方便、操作响应时间短。\n",
+          "width": 6.114583333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "基本内容、目标、拟采用的",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "方案",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "基本内容：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "    针对校园快递的特点和需求，设计采用",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "Vue",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "、",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "MyBatis",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "、",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "微信小",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "程序等相关技术基",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "SpringBoot",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "设计的校园快递服务平台。系统具有专门的供用户使用的前台和专门供校园跑腿服务系统人员使用的后台。前台有用户注册验证、下发订单、查看订单、撤销订单、意见反馈等功能,为用户提供代取和派送快递的渠道,实时为下单用户和接单用户提供订单详情,实现了用户的快递代取需求。后台有系统管理人员注册登录、订单管理、留言管理、骑手管理、顾客管理、以及派送路线分配设计，该平台具有较强的针对性、实用性和便利性,有效地实现了校园快递的代取。 ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": []
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "目标：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "1.用户操作",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "用户信息管理模块：登录、注册、找回密码、修改用户的个人信息",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "快递信息管理模块",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "：选择代取或代寄快递，并填写相关信息",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "留言模块：订单评价、询问服务信息",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "2.管理员操作",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "\n",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "    （1）管理员信息管理：登录、注册、找回密码、修改、查询(浏览)管理员信息",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "（2）快递订单管理：修改订单状态、删除失效、错误订单、查询(浏览)全部或所需订单信息",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "（3）留言信息管理：查询(浏览)用户留言、回复用户留言",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "（4）路线规划管理：通过适当的算法为骑手分配最佳配送路线",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "（5）骑手信息管理：增加新骑手、修改骑手信息、删除离职骑手、查询(浏览)全部或相关骑手信息",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "（6）用户信息管理：查询(浏览)全部或所需用户信息",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "拟采用的方案：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "1.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "前端：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "Vue",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "框架。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "2.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "后台：Spring ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "Boot+Mybatis",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "框架。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "3.数据库：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "mysql",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "4.IDE环境：IDEA。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "5.运行环境：java ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "jdk",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": " 1.8。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "6.界面要求：界面美观、设计合理、符合人性化设计。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "7.系统要求：用户使用方便、操作响应时间短。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": []
+            }
+          ]
+        },
+        {
+          "ri": 4,
+          "ci": 0,
+          "text": "进度安排\n2025年7月 - 2025年10月 查阅相关资料、调研，完成开题。\n2025年11月 - 2026年1月 完成作品设计开发、系统测试。\n2026年2月 - 2026年3月 深入阅读与课题有关的文章，完成毕业论文。\n2026年4月 - 2026年5月 审核论文，准备答辩。\n",
+          "width": 6.114583333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "进度",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "安排",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "20",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "25",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年7月 - 202",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "5",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年10月 查阅相关资料、调研，完成开题。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "202",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "5",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年11月 - 202",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "6",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年1月 完成作品设计开发、系统测试。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "202",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "6",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年2月 - 202",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "6",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年3月 深入阅读与课题有关的文章，完成毕业论文。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "202",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "6",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "4",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "月 - 202",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "6",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "年",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "5",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "月 审核论文，准备答辩。",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": []
+            }
+          ]
+        },
+        {
+          "ri": 5,
+          "ci": 0,
+          "text": "主要参考文献\n[1]陈倩怡,何军.Vue+Springboot+MyBatis技术应用解析[J].电脑编程技巧与维护,2020(01):14-15+28.DOI:10.16184/j.cnki.comprg.2020.01.005.\n[2]单树倩,任佳勋.基于SpringBoot和Vue框架的数据库原理网站设计与实现[J].电脑知识与技术,2021,17(30):40-41+50.DOI:10.14004/j.cnki.ckt.2021.2868.\n[3]李广宏.vue.js前端应用技术分析[J].中国新通信,2019,21(20):115.\n[4]王志文.Vue+Elementui+Echarts在项目管理平台中的应用[J].山西科技,2020,35(06):45-47.\n[5]王小雨,石相宜,王菁,杨联安.基于改进重心法的校园快递服务中心选址研究[J].地理空间信息,2022,20(03):127-130.\n[6]江建秧.高校校园快递服务优化分析[J].现代商业,2021(29):80-82.DOI:10.14097/j.cnki.5392/2021.29.025.\n[7]王花.校园快递“最后一百米”有偿代取可行性分析[J].中国储运,2021(09):140-141.DOI:10.16301/j.cnki.cn12-1204/f.2021.09.070.\n[8]吴思仪. 大学校园快递配送终端布局优化研究[D].重庆邮电大学,2020.DOI:10.27675/d.cnki.gcydx.2020.000774.\n[9]李一凡,李泽慧,赵桐,刘晓明. 校园快递最后一公里共同配送可行性研究[C]//.面向高质量发展的空间治理——2021中国城市规划年会论文集（14区域规划与城市经济）.,2021:344-358.DOI:10.26914/c.cnkihy.2021.028074.",
+          "width": 6.114583333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "主要",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "参考",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "文献",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[1]陈倩怡,何军.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "Vue+Springboot+MyBatis",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "技术应用解析[J].电脑编程技巧与维护,2020(01):14-15+28.DOI:10.16184/j.cnki.comprg.2020.01.005.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[2]单树倩,",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "任佳勋",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": ".基于",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "SpringBoot",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "和",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "Vue",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "框架的数据库原理网站设计与实现[J].电脑知识与技术,2021,17(30):40-41+",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "50.DOI:10.14004/j.cnki.ckt",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": ".2021.2868.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[3]李广宏.vue.js前端应用技术分析[J].中国新通信,2019,21(20):115.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[4]王志文.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "Vue+Elementui+Echarts",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "在项目管理平台中的应用[J].山西科技,2020,35(06):45-47.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[5]王小雨,石相宜,王菁,杨联安.基于改进重心法的校园快递服务中心选址研究[J].地理空间信息,2022,20(03):127-130.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[6]",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "江建秧",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": ".高校校园快递服务优化分析[J].现代商业,2021(29):",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "80-82.DOI:10.14097/j.cnki",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": ".5392/2021.29.025.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[7]王花.校园快递“最后一百米”有偿代取可行性分析[J].中国储运,2021(09):140-141.DOI:10.16301/j.cnki.cn12-1204/f.2021.09.070.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[8]",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "吴思仪",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": ". 大学校园快递配送终端布局优化研究[D].重庆邮电大",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "学,2020.DOI:10.27675/d.cnki.gcydx.2020.000774.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "[9]李一凡,李泽慧,赵桐,刘晓明. 校园快递最后一公里共同配送可行性研究[C]//.面向高质量发展的空间治理——2021中国城市规划年会论文集（14区域规划与城市经济）.,2021:344-358.DOI:10.26914/c.cnkihy.2021.028074.",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 6,
+          "ci": 0,
+          "text": "指导教师意见：\n\n指导教师：                                       \n年   月   日",
+          "width": 6.114583333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "指导教师",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "意见",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "",
+                  "size": null,
+                  "bold": null,
+                  "font": null
+                },
+                {
+                  "text": "：",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": 15.6,
+              "line": 1.5,
+              "runs": []
+            },
+            {
+              "style": "Normal",
+              "align": "RIGHT (2)",
+              "before": null,
+              "after": 15.6,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "指导教师： ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": " ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "   ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": " ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "                       ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "          ",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "RIGHT (2)",
+              "before": null,
+              "after": 15.6,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "年   月   日",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 7,
+          "ci": 0,
+          "text": "专业负责人意见：\n                                   专业负责人：\n年   月   日",
+          "width": 6.114583333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "专业",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "负责人",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "意见",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "：",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "RIGHT (2)",
+              "before": null,
+              "after": 15.6,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "                                   专业负责人：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "RIGHT (2)",
+              "before": null,
+              "after": 15.6,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "年   月   日",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ri": 8,
+          "ci": 0,
+          "text": "学院意见：\n\n学院（公章）：\n年   月   日",
+          "width": 6.114583333333333,
+          "paragraphs": [
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "学院",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                },
+                {
+                  "text": "意见：",
+                  "size": null,
+                  "bold": true,
+                  "font": "黑体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "None",
+              "before": null,
+              "after": null,
+              "line": 1.5,
+              "runs": []
+            },
+            {
+              "style": "Normal",
+              "align": "RIGHT (2)",
+              "before": null,
+              "after": 15.6,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "学院",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "（",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "公章",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                },
+                {
+                  "text": "）：",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            },
+            {
+              "style": "Normal",
+              "align": "RIGHT (2)",
+              "before": null,
+              "after": 15.6,
+              "line": 1.5,
+              "runs": [
+                {
+                  "text": "年   月   日",
+                  "size": null,
+                  "bold": null,
+                  "font": "宋体"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
