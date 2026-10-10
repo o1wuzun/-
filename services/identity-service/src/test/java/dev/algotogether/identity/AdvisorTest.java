@@ -1,0 +1,48 @@
+package dev.algotogether.identity;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpServer;
+import dev.algotogether.contracts.TokenCodec;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPairGenerator;
+import java.util.Base64;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.embedded.*;
+import org.springframework.web.server.ResponseStatusException;
+import static org.junit.jupiter.api.Assertions.*;
+
+class AdvisorTest {
+ @Test void verifiedGroupContextFeedsModelAndFailuresDoNotLeakSecrets() throws Exception {
+  var keys=KeyPairGenerator.getInstance("RSA");keys.initialize(2048);var pair=keys.generateKeyPair();
+  String pub=Base64.getEncoder().encodeToString(pair.getPublic().getEncoded()),priv=Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
+  String ticket="Bearer "+new TokenCodec(pub,priv).issue("student");
+  var database=new EmbeddedDatabaseBuilder().generateUniqueName(true).setType(EmbeddedDatabaseType.H2).build();
+  var db=new JdbcTemplate(database);db.execute("CREATE TABLE user_settings(user_id VARCHAR,advisor_provider VARCHAR,advisor_api_key VARCHAR)");
+  var server=HttpServer.create(new InetSocketAddress("127.0.0.1",0),0);var status=new AtomicInteger(200);var calls=new AtomicInteger();
+  server.createContext("/api/v1/group/discussions",exchange->{
+   assertEquals(ticket,exchange.getRequestHeaders().getFirst("Authorization"));
+   byte[] body="{\"data\":[{\"id\":\"post-a\",\"title\":\"二分\",\"body\":\"左闭右开\"}]}".getBytes(StandardCharsets.UTF_8);
+   exchange.sendResponseHeaders(status.get(),body.length);exchange.getResponseBody().write(body);exchange.close();
+  });
+  server.createContext("/model",exchange->{
+   calls.incrementAndGet();assertEquals("Bearer test-secret",exchange.getRequestHeaders().getFirst("Authorization"));
+   String body=new String(exchange.getRequestBody().readAllBytes(),StandardCharsets.UTF_8);assertTrue(body.contains("post-a"));assertTrue(body.contains("左闭右开"));assertFalse(body.contains("test-secret"));
+   byte[] answer="{\"choices\":[{\"message\":{\"content\":\"建议明确循环不变量，参考 post-a\"}}]}".getBytes(StandardCharsets.UTF_8);
+   exchange.sendResponseHeaders(200,answer.length);exchange.getResponseBody().write(answer);exchange.close();
+  });server.start();
+  try {
+   String base="http://127.0.0.1:"+server.getAddress().getPort();
+   var advisor=new AdvisorController(db,new ObjectMapper(),pub,base+"/model",base,base);
+   var q=new AdvisorController.Question("group-default","如何理解二分？","share-group-context");
+   assertEquals(409,assertThrows(ResponseStatusException.class,()->advisor.ask(ticket,q)).getStatusCode().value());
+   db.update("INSERT INTO user_settings VALUES(?,?,?)","student","test-model","test-secret");
+   var result=advisor.ask(ticket,q);String output=new ObjectMapper().writeValueAsString(result.data());assertTrue(output.contains("循环不变量"));assertFalse(output.contains("test-secret"));assertEquals(1,calls.get());
+   status.set(404);assertEquals(403,assertThrows(ResponseStatusException.class,()->advisor.ask(ticket,q)).getStatusCode().value());assertEquals(1,calls.get());
+   assertEquals(401,assertThrows(ResponseStatusException.class,()->advisor.ask(null,q)).getStatusCode().value());
+   assertEquals(400,assertThrows(ResponseStatusException.class,()->advisor.ask(ticket,new AdvisorController.Question("group-default","question","no"))).getStatusCode().value());
+  }finally{server.stop(0);database.shutdown();}
+ }
+}

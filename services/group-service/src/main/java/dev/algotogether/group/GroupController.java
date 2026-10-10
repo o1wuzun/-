@@ -25,6 +25,12 @@ public class GroupController {
     private void event(String kind,Object payload){try{db.update("INSERT INTO event_log(event_id,kind,payload,created_at) VALUES(?,?,?,?)",UUID.randomUUID().toString(),kind,json.writeValueAsString(payload),Instant.now().toString());}catch(Exception e){throw new IllegalStateException(e);}}
     public record Join(@NotBlank String join_key,@NotBlank @Size(max=40)String nickname,@NotBlank @Size(max=80)String host_name){}
     public record Discussion(@NotBlank @Size(max=100)String title,@NotBlank @Size(max=20000)String body){}
+    public record Comment(@NotBlank @Size(max=5000) String body){}
+    private void discussionExists(String post){if(db.queryForObject("SELECT COUNT(*) FROM discussions WHERE id=?",Integer.class,post)==0)throw Api.error(HttpStatus.NOT_FOUND,"讨论不存在");}
+    @GetMapping("/discussions/{post}/comments")
+    Api<?> comments(@PathVariable String post,@RequestHeader(value="Authorization",required=false)String h){member(h);discussionExists(post);return Api.of(db.query("SELECT c.id,c.body,c.created_at,m.nickname FROM comments c JOIN members m ON c.author_id=m.user_id WHERE c.discussion_id=? ORDER BY c.created_at,c.id LIMIT 500",(r,n)->Map.of("id",r.getString("id"),"body",r.getString("body"),"created_at",r.getString("created_at"),"nickname",r.getString("nickname")),post));}
+    @PostMapping("/discussions/{post}/comments") @Transactional @ResponseStatus(HttpStatus.CREATED)
+    Api<?> comment(@PathVariable String post,@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Comment r){String user=member(h);discussionExists(post);String id=UUID.randomUUID().toString(),time=Instant.now().toString();db.update("INSERT INTO comments VALUES(?,?,?,?,?)",id,post,user,r.body(),time);event("comment_created",Map.of("id",id,"discussion_id",post,"author_id",user,"body",r.body(),"created_at",time));return Api.of(Map.of("id",id));}
     @GetMapping Api<?> info(){return Api.of(Map.of("id",id,"name",name,"mode","independent-group-service"));}
     @PostMapping("/join") @Transactional
     Api<?> join(@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Join r){
