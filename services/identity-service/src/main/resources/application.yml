@@ -11,5 +11,6 @@ spring:
 identity:
   private-key: ${IDENTITY_PRIVATE_KEY}
   public-key: ${IDENTITY_PUBLIC_KEY}
+  admin-emails: ${IDENTITY_ADMIN_EMAILS:}
 directory:
   groups: '${DIRECTORY_GROUPS:[{"id":"group-default","name":"算法基础学习组","description":"从二分查找与数据结构开始","proxy_path":"/groups/group-default"},{"id":"group-contest","name":"算法竞赛练习组","description":"分享比赛思路和解题经验","proxy_path":"/groups/group-contest"}]}'

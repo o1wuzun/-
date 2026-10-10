@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1")
 public class IdentityController {
-    private final JdbcTemplate db;
+    private final JdbcTemplate db; private final String adminEmails;
     private final TokenCodec tokens;
     private final BCryptPasswordEncoder passwords=new BCryptPasswordEncoder();
-    public IdentityController(JdbcTemplate db,@Value("${identity.public-key}")String pub,@Value("${identity.private-key}")String priv){this.db=db;tokens=new TokenCodec(pub,priv);}
+    public IdentityController(JdbcTemplate db,@Value("${identity.public-key}")String pub,@Value("${identity.private-key}")String priv,@Value("${identity.admin-emails:}")String adminEmails){this.db=db;this.adminEmails=adminEmails;tokens=new TokenCodec(pub,priv);}
     public record Registration(@Email @NotBlank String email,@NotBlank @Size(min=8,max=72) String password,@NotBlank @Size(max=40) String nickname){}
     public record Login(@Email @NotBlank String email,@NotBlank String password){}
     public record Profile(@Size(max=40) String nickname,@Size(max=500) String avatar_url){}
@@ -27,6 +27,7 @@ public class IdentityController {
         String id=UUID.randomUUID().toString();
         try { db.update("INSERT INTO accounts(id,email,nickname,password_hash) VALUES(?,?,?,?)",id,r.email().toLowerCase(Locale.ROOT),r.nickname(),passwords.encode(r.password())); }
         catch(DuplicateKeyException e){throw Api.error(HttpStatus.CONFLICT,"该邮箱已注册");}
+        if(Arrays.stream(adminEmails.split(",")).map(String::trim).anyMatch(x->x.equalsIgnoreCase(r.email())))db.update("UPDATE accounts SET role='ADMIN' WHERE id=?",id);
         return Api.of(Map.of("id",id,"nickname",r.nickname()));
     }
     @PostMapping("/auth/login")
