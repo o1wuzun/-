@@ -29,6 +29,9 @@ class IdentityIntegrationTest {
         String token=json.readTree(response).path("data").path("access_token").asText();
         mvc.perform(get("/api/v1/users/me").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.email").value("student@example.com"));
         mvc.perform(get("/api/v1/users/me")).andExpect(status().isUnauthorized());
+        mvc.perform(put("/api/v1/users/me/integrations").header("Authorization","Bearer "+token).contentType("application/json").content("{\"oj_provider\":\"Codeforces\",\"oj_api_key\":\"oj-secret\",\"advisor_provider\":\"test-model\",\"advisor_api_key\":\"model-secret\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.data.integrations.advisor_api_key").doesNotExist()).andExpect(jsonPath("$.data.integrations.advisor_key_configured").value(true));
+        mvc.perform(put("/api/v1/users/me/integrations").header("Authorization","Bearer "+token).contentType("application/json").content("{\"oj_provider\":\"Codeforces\",\"oj_api_key\":\"\",\"advisor_provider\":\"new-model\",\"advisor_api_key\":\"\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.data.integrations.advisor_key_configured").value(true));
+
         String creation="{\"name\":\"普通用户学习组\",\"description\":\"用户创建权限测试\"}";
         mvc.perform(post("/api/v1/community/group-requests").contentType("application/json").content(creation)).andExpect(status().isUnauthorized());
         mvc.perform(post("/api/v1/community/group-requests").header("Authorization","Bearer "+token).contentType("application/json").content(creation)).andExpect(status().isCreated()).andExpect(jsonPath("$.data.status").value("PENDING"));
