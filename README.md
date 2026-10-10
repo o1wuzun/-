@@ -1,5 +1,7 @@
 # 目标驱动的算法学习社区
 
+正在迁移到 Spring Boot + Vue 3。新增代码在 `services/`、`frontend/`；启动步骤、已实现范围和后续拆分计划见 [迁移说明](docs/MIGRATION.md)。Python 原型保留在 `app/`，以下步骤用于旧原型。
+
 基于项目内 `API.md` 与 `TRANSACTION_LOGIC.md` 的模块化单体基线。首期使用 FastAPI + SQLite，提供可直接运行的 REST API；数据库、缓存和异步 worker 均通过边界保留后续替换空间。
 
 ## 启动

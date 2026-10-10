@@ -1,0 +1,17 @@
+server:
+  port: ${GROUP_PORT:8082}
+spring:
+  datasource:
+    url: ${GROUP_DB_URL:jdbc:h2:file:./data/group-default}
+    username: sa
+    password: ${DB_PASSWORD:}
+  sql:
+    init:
+      mode: always
+identity:
+  public-key: ${IDENTITY_PUBLIC_KEY}
+group:
+  id: ${GROUP_ID:group-default}
+  name: ${GROUP_NAME:算法学习群组}
+  join-key: ${GROUP_JOIN_KEY}
+  owner-id: ${GROUP_OWNER_ID:}

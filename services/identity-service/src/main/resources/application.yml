@@ -1,0 +1,13 @@
+server:
+  port: ${IDENTITY_PORT:8081}
+spring:
+  datasource:
+    url: ${IDENTITY_DB_URL:jdbc:h2:file:./data/identity}
+    username: sa
+    password: ${DB_PASSWORD:}
+  sql:
+    init:
+      mode: always
+identity:
+  private-key: ${IDENTITY_PRIVATE_KEY}
+  public-key: ${IDENTITY_PUBLIC_KEY}
