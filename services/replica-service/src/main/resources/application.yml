@@ -1,0 +1,15 @@
+server:
+  port: ${REPLICA_PORT:8090}
+  address: ${REPLICA_BIND:127.0.0.1}
+spring:
+  datasource:
+    url: ${REPLICA_DB_URL:jdbc:h2:file:./data/replica-default}
+    username: sa
+    password: ${DB_PASSWORD:}
+  sql:
+    init:
+      mode: always
+replica:
+  source-url: ${REPLICA_SOURCE_URL:http://127.0.0.1:8082}
+  node-credential: ${REPLICA_NODE_CREDENTIAL:}
+  poll-ms: ${REPLICA_POLL_MS:5000}

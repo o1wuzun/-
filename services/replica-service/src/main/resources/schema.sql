@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS replica_events(seq BIGINT PRIMARY KEY,event_id VARCHAR(36) NOT NULL UNIQUE,kind VARCHAR(80) NOT NULL,payload CLOB NOT NULL,created_at VARCHAR(40) NOT NULL,received_at VARCHAR(40) NOT NULL);
+CREATE TABLE IF NOT EXISTS replica_state(id INT PRIMARY KEY CHECK(id=1),group_id VARCHAR(80),next_cursor BIGINT NOT NULL DEFAULT 0,status VARCHAR(30) NOT NULL,last_error VARCHAR(1000),last_sync_at VARCHAR(40),updated_at VARCHAR(40) NOT NULL);
+MERGE INTO replica_state(id,group_id,next_cursor,status,last_error,last_sync_at,updated_at) KEY(id) VALUES(1,NULL,0,'never',NULL,NULL,CURRENT_TIMESTAMP);

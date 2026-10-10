@@ -9,6 +9,7 @@
 - group-service：一个进程只管理配置的一个群组，独立 H2 数据库，联网密钥加入、成员心跳、成员撤销、群内讨论及事务事件日志。
 - shared-contracts：响应协议和身份验签，不含共享实体或跨服务数据库访问。
 - Vue 前端：注册登录、当前群组入口、入组、讨论和成员在线状态；刷新登录后尝试心跳恢复成员状态。
+- replica-service：成员主机的只读副本进程，定时按游标拉取群组事件，按 event_id 幂等写入本地 H2，并提供本地状态和强制同步接口。
 
 身份服务持有私钥，群组进程仅持有公钥。节点复制不得含账号表、密码或身份私钥。普通成员凭证只能读事件，不允许通过复制接口写入数据。事件读取只完成增量读取边界，尚无节点认证、拉取落库或自动复制。
 
@@ -35,7 +36,15 @@ pwsh -File scripts/start-dev.ps1
 
 节点使用 `X-Node-Credential` 请求 `/api/v1/group/replication/events?after=0`，得到 group_id、事件、next_cursor 和 has_more。页大小 100；后续使用 next_cursor 续读。该凭证不拥有发布帖子、修改成员或其他写入权限，且不能跨群组使用。
 
-当前完成的是服务端节点身份和增量读取协议，还没有成员节点的独立副本数据库、事件消费去重、定时拉取及离线读取。此阶段不宣称自动复制已实现。将来节点副本只能接受经过验证的群组事件；个人目标、密码、身份私钥不进入复制事件。
+成员副本已具备本地数据库、事件消费去重、定时拉取和断线后游标续读。启动副本：
+
+```powershell
+pwsh -File scripts/start-replica.ps1 -SourceUrl https://group.example.com -NodeCredential '<创建节点时返回的凭证>' -DatabasePath './data/my-replica' -Port 8090
+```
+
+副本默认只绑定 `127.0.0.1`，状态接口为 `GET http://127.0.0.1:8090/api/v1/replica/status`，手动同步为 `POST /api/v1/replica/sync`，本地缓存事件为 `GET /api/v1/replica/events?after=0`。节点服务只持有自己的凭证，不接受群组写操作；每次源服务返回的事件按 event_id 去重。拉取失败会保留 next_cursor 并记录 failed 状态，下一轮重试，不推进错误游标。
+
+当前复制内容是群组事件和讨论缓存，尚未把缓存重建为完整的查询模型；个人目标、密码、身份私钥不进入复制事件。节点需要用户在群组页面注册，撤销节点后后续拉取会被源服务拒绝。
 
 ```powershell
 pwsh -File scripts/test-group-isolation.ps1
@@ -47,7 +56,7 @@ pwsh -File scripts/stop-dev.ps1
 ## 后续模块与顺序
 
 1. 身份服务增加注册节点 / 群组目录，群组服务验证身份后发独立成员及节点凭证；群主撤销凭证需同步撤销版本。
-2. replication 模块：不可变 event_id、来源节点、因果版本、单写者资源归属、消费去重、断线续传；先双节点验证，再多节点。
+2. replication 模块增强：不可变 event_id、来源节点、因果版本、单写者资源归属、完整查询模型重建、双向节点健康监测；先双节点验证，再多节点。
 3. learning 模块：迁移个人目标、任务、打卡、复盘，不进入群组副本；主动分享才写群组事件。
 4. assessment 模块：确定性知识检查及版本化规则；评价和 accepted 不能直接冒充能力通过。
 5. oj-adapter 模块：Codeforces，重试、授权版本及来源明确。
