@@ -1,0 +1,8 @@
+server:
+  address: 127.0.0.1
+  port: ${TUNNEL_PORT:8096}
+tunnel:
+  relay-url: ${TUNNEL_RELAY_URL}
+  group-id: ${TUNNEL_GROUP_ID}
+  credential: ${TUNNEL_CREDENTIAL}
+  source-url: ${TUNNEL_SOURCE_URL:http://127.0.0.1:8082}

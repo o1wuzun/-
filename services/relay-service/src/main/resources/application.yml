@@ -1,0 +1,4 @@
+server:
+  port: ${RELAY_PORT:8095}
+relay:
+  credentials: ${RELAY_CREDENTIALS:{}}
