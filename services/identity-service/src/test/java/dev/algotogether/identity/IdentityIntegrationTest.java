@@ -29,5 +29,10 @@ class IdentityIntegrationTest {
         String token=json.readTree(response).path("data").path("access_token").asText();
         mvc.perform(get("/api/v1/users/me").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.email").value("student@example.com"));
         mvc.perform(get("/api/v1/users/me")).andExpect(status().isUnauthorized());
+        String creation="{\"name\":\"普通用户学习组\",\"description\":\"用户创建权限测试\"}";
+        mvc.perform(post("/api/v1/community/group-requests").contentType("application/json").content(creation)).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/v1/community/group-requests").header("Authorization","Bearer "+token).contentType("application/json").content(creation)).andExpect(status().isCreated()).andExpect(jsonPath("$.data.status").value("PENDING"));
+        mvc.perform(get("/api/v1/community/group-requests").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data[0].NAME").value("普通用户学习组"));
+        mvc.perform(get("/api/v1/admin/users").header("Authorization","Bearer "+token)).andExpect(status().isForbidden());
     }
 }
