@@ -26,3 +26,7 @@ CREATE TABLE IF NOT EXISTS advisor_turns (
 );
 
 ALTER TABLE user_settings ADD COLUMN IF NOT EXISTS advisor_endpoint VARCHAR(1000);
+CREATE TABLE IF NOT EXISTS advisor_generations (
+ user_id VARCHAR(36) NOT NULL, group_id VARCHAR(80) NOT NULL, generation BIGINT NOT NULL DEFAULT 0,
+ PRIMARY KEY(user_id,group_id)
+);

@@ -12,3 +12,5 @@ data/
 *.mv.db
 *.trace.db
 .idea/
+frontend/test-results/
+frontend/playwright-report/

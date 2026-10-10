@@ -1,0 +1,92 @@
+import {test,expect} from '@playwright/test'
+import {readFile} from 'node:fs/promises'
+import {createServer} from 'node:http'
+import {randomUUID} from 'node:crypto'
+
+test('two users discuss, consult privately, reload history and switch groups',async({browser})=>{
+ const keys=JSON.parse(await readFile(new URL('../../data/dev-keys.json',import.meta.url),'utf8'))
+ const server=createServer(async(req,res)=>{
+  let text='';for await(const chunk of req)text+=chunk
+  const payload=JSON.parse(text)
+  const turns=payload.messages.filter(m=>m.role==='assistant').length
+  res.setHeader('Content-Type','application/json')
+  res.end(JSON.stringify({choices:[{message:{content:`[浏览器测试模拟模型] 历史轮数=${turns}`}}]}))
+ })
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve))
+ const contexts=[]
+ async function register(nickname){
+  const context=await browser.newContext();contexts.push(context);const page=await context.newPage()
+  await page.goto('http://127.0.0.1:5173')
+  await page.getByRole('button',{name:'登录 / 注册',exact:true}).click()
+  await page.getByRole('button',{name:'还没有账号？注册'}).click()
+  await page.getByLabel('邮箱',{exact:true}).fill(`browser-${randomUUID()}@example.com`)
+  await page.getByLabel('密码',{exact:true}).fill(`Browser-test-${randomUUID()}`)
+  await page.getByLabel('昵称',{exact:true}).fill(nickname)
+  await page.getByRole('button',{name:'确认',exact:true}).click()
+  await expect(page.locator('header')).toContainText(nickname)
+  return page
+ }
+ async function join(page,name,key){
+  await page.getByRole('button',{name:'◇ 群组入口',exact:true}).click()
+  const card=page.locator('article').filter({has:page.getByRole('heading',{name,exact:true})})
+  await card.getByRole('button').click()
+  const dialog=page.locator('.dialog')
+  await dialog.getByLabel('群主分享的联网密钥').fill(key)
+  await dialog.getByRole('button',{name:'确认',exact:true}).click()
+  await expect(page.locator('.status')).toContainText(name)
+  await expect(dialog).not.toBeVisible()
+ }
+ try{
+  const a=await register('浏览器同伴A'),b=await register('浏览器同伴B')
+  await expect(a.getByRole('button',{name:'＋ 创建群组',exact:true})).toBeVisible()
+  await join(a,'算法基础学习组',keys.join_key)
+  await join(b,'算法基础学习组',keys.join_key)
+  const title=`浏览器问答-${randomUUID()}`
+  await a.getByRole('button',{name:'＋ 发布讨论'}).click()
+  await a.getByLabel('标题',{exact:true}).fill(title)
+  await a.getByLabel('内容',{exact:true}).fill('请讨论二分搜索的循环不变量')
+  await a.locator('.dialog').getByRole('button',{name:'确认',exact:true}).click()
+  await b.getByRole('button',{name:'同步成员',exact:true}).click()
+  const post=b.locator('article.post').filter({has:b.getByRole('heading',{name:title,exact:true})})
+  await post.getByLabel('回复同伴').fill('明确区间边界，再证明区间逐步缩小')
+  await post.getByRole('button',{name:'发送回复',exact:true}).click()
+  await expect(post).toContainText('明确区间边界')
+  const original=a.locator('article.post').filter({has:a.getByRole('heading',{name:title,exact:true})})
+  await original.getByRole('button',{name:'查看 / 刷新回复'}).click()
+  await expect(original).toContainText('明确区间边界')
+  await a.getByRole('button',{name:'⚙ 个人设置',exact:true}).click()
+  await expect(a.getByLabel('昵称',{exact:true})).toHaveValue('浏览器同伴A')
+  await a.getByLabel('模型接口地址').fill(`http://127.0.0.1:${server.address().port}/v1/chat/completions`)
+  await a.getByLabel('顾问模型名称').fill('browser-test-model')
+  await a.getByLabel('顾问 API 密钥（留空保留已保存密钥）').fill('browser-fixture-key')
+  await a.getByRole('button',{name:'保存连接设置'}).click()
+  await expect(a.getByLabel('顾问 API 密钥（留空保留已保存密钥）')).toHaveValue('')
+  await a.getByRole('button',{name:'✦ 机器人顾问',exact:true}).click()
+  await expect(a.getByRole('button',{name:'询问顾问',exact:true})).toBeDisabled()
+  await a.getByRole('checkbox').check()
+  await a.getByPlaceholder('例如：帮我分析这道题的复杂度').fill('解释二分复杂度')
+  await a.getByRole('button',{name:'询问顾问',exact:true}).click()
+  await expect(a.locator('.advisor-answer')).toContainText('历史轮数=0')
+  await a.getByPlaceholder('例如：帮我分析这道题的复杂度').fill('继续说明边界条件')
+  await a.getByRole('button',{name:'询问顾问',exact:true}).click()
+  await expect(a.locator('.advisor-answer').last()).toContainText('历史轮数=1')
+  await a.screenshot({path:test.info().outputPath('advisor-desktop.png'),fullPage:true})
+  await a.setViewportSize({width:390,height:844})
+  await expect.poll(()=>a.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)
+  await a.screenshot({path:test.info().outputPath('advisor-mobile.png'),fullPage:true})
+  await a.setViewportSize({width:1366,height:900})
+  await b.getByRole('button',{name:'✦ 机器人顾问',exact:true}).click()
+  await expect(b.locator('.advisor-answer')).toHaveCount(0)
+  await a.reload()
+  await a.getByRole('button',{name:'✦ 机器人顾问',exact:true}).click()
+  await expect(a.locator('.advisor-answer')).toHaveCount(2)
+  await a.getByRole('button',{name:'清空我的当前群组会话'}).click()
+  await expect(a.locator('.advisor-answer')).toHaveCount(0)
+  await join(a,'算法竞赛练习组',keys.contest_join_key)
+  await expect(a.getByRole('heading',{name:title,exact:true})).toHaveCount(0)
+  await a.getByRole('button',{name:'✦ 机器人顾问',exact:true}).click()
+  await expect(a.locator('.advisor-answer')).toHaveCount(0)
+  await a.getByRole('button',{name:'退出登录',exact:true}).click()
+  await expect(a.getByRole('button',{name:'✦ 机器人顾问',exact:true})).toHaveCount(0)
+ }finally{for(const context of contexts)await context.close();await new Promise(resolve=>server.close(resolve))}
+})
