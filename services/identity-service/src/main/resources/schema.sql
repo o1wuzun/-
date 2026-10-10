@@ -12,3 +12,9 @@ CREATE TABLE IF NOT EXISTS user_settings (
  advisor_provider VARCHAR(40), advisor_api_key VARCHAR(500),
  CONSTRAINT fk_user_settings_account FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS group_requests (
+ id VARCHAR(36) PRIMARY KEY, requested_by VARCHAR(36) NOT NULL,
+ name VARCHAR(80) NOT NULL, description VARCHAR(500) NOT NULL,
+ status VARCHAR(20) NOT NULL DEFAULT 'PENDING', created_at VARCHAR(40) NOT NULL,
+ CONSTRAINT fk_group_requests_user FOREIGN KEY (requested_by) REFERENCES accounts(id)
+);
