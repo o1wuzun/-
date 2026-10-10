@@ -27,7 +27,22 @@ pwsh -File scripts/start-dev.ps1
 
 群组实例部署参数：GROUP_ID、GROUP_NAME、GROUP_PORT、GROUP_DB_URL、GROUP_JOIN_KEY、GROUP_OWNER_ID，以及公共 IDENTITY_PUBLIC_KEY。不同群组必须使用不同数据库路径与邀请密钥。GROUP_OWNER_ID 由部署者指定统一账号 ID，未配置时不开放群主管理能力。
 
-目前前端通过 Vite 代理连接单个群组地址（GROUP_SERVICE_URL）。多群组发现和动态切换仍待实现。公网部署需要 HTTPS 反向代理与可达地址，当前没有 NAT 穿透或中继。当前票据不是标准 JWT，尚无刷新令牌、会话撤销或登录限流；开发版本不能直接当作生产认证服务。
+前端从身份服务 `/api/v1/community/groups` 读取部署者配置的群组目录，通过固定代理路由切换群组，不接受客户端任意代理地址。默认运行两个独立群组（8082 基础组、8083 竞赛组），数据库和入组密钥分别独立。密钥保存在本机 data/dev-keys.json：join_key 对应基础组，contest_join_key 对应竞赛组，不要上传此文件。公网部署需要 HTTPS 反向代理与可达地址，当前没有 NAT 穿透或中继。当前票据不是标准 JWT，尚无刷新令牌、会话撤销或登录限流；开发版本不能直接当作生产认证服务。
+
+## 节点认证与复制边界
+
+成员可以在“同步节点”页面为自己的设备注册独立凭证，凭证仅创建时返回，数据库仅保存 SHA-256 摘要。注册、列举和撤销接口为 `/api/v1/group/nodes`。本人可以撤销自己的节点，配置的群主也可以撤销节点。每次读取同时校验节点及所属成员是否仍有效。
+
+节点使用 `X-Node-Credential` 请求 `/api/v1/group/replication/events?after=0`，得到 group_id、事件、next_cursor 和 has_more。页大小 100；后续使用 next_cursor 续读。该凭证不拥有发布帖子、修改成员或其他写入权限，且不能跨群组使用。
+
+当前完成的是服务端节点身份和增量读取协议，还没有成员节点的独立副本数据库、事件消费去重、定时拉取及离线读取。此阶段不宣称自动复制已实现。将来节点副本只能接受经过验证的群组事件；个人目标、密码、身份私钥不进入复制事件。
+
+```powershell
+pwsh -File scripts/test-group-isolation.ps1
+pwsh -File scripts/stop-dev.ps1
+```
+
+隔离联调会创建明确标记的本地测试账号与讨论，不清空已有记录。stop-dev 只停止路径核验匹配本项目的服务及 Java 子进程，避免 Windows 启动包装进程退出后残留 JVM 锁住构建文件。
 
 ## 后续模块与顺序
 

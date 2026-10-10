@@ -17,6 +17,9 @@ class IdentityIntegrationTest {
     static {try{var gen=KeyPairGenerator.getInstance("RSA");gen.initialize(2048);var keys=gen.generateKeyPair();pub=Base64.getEncoder().encodeToString(keys.getPublic().getEncoded());priv=Base64.getEncoder().encodeToString(keys.getPrivate().getEncoded());}catch(Exception e){throw new RuntimeException(e);}}
     @DynamicPropertySource static void properties(DynamicPropertyRegistry r){r.add("identity.public-key",()->pub);r.add("identity.private-key",()->priv);r.add("spring.datasource.url",()->"jdbc:h2:mem:identity-test;DB_CLOSE_DELAY=-1");}
     @Autowired MockMvc mvc;@Autowired ObjectMapper json;
+    @Test void directoryContainsIndependentGroups() throws Exception {
+        mvc.perform(get("/api/v1/community/groups")).andExpect(status().isOk()).andExpect(jsonPath("$.data.length()").value(2)).andExpect(jsonPath("$.data[0].proxy_path").value("/groups/group-default")).andExpect(jsonPath("$.data[1].id").value("group-contest"));
+    }
     @Test void registrationAndAuthentication()throws Exception{
         String data="{\"email\":\"student@example.com\",\"nickname\":\"算法同伴\",\"password\":\"test-password-123\"}";
         mvc.perform(post("/api/v1/auth/register").contentType("application/json").content(data)).andExpect(status().isCreated());

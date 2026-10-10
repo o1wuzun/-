@@ -1,0 +1,2 @@
+.group-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}.group-grid .card{max-width:none}.group-grid .card h3{margin-bottom:5px}.group-grid .card p{min-height:45px}
+.node-form{display:flex;align-items:center;gap:15px}.node-form label{flex:1;max-width:350px}.credential{display:block;overflow-wrap:anywhere;background:#edf0ff;padding:15px;border-radius:8px;margin:15px 0}
