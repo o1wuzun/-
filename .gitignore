@@ -11,3 +11,4 @@ data/
 .env
 *.mv.db
 *.trace.db
+.idea/

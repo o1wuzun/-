@@ -4,3 +4,10 @@ CREATE TABLE IF NOT EXISTS accounts (
  nickname VARCHAR(40) NOT NULL,
  password_hash VARCHAR(100) NOT NULL
 );
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500);
+CREATE TABLE IF NOT EXISTS user_settings (
+ user_id VARCHAR(36) PRIMARY KEY,
+ oj_provider VARCHAR(40), oj_api_key VARCHAR(500),
+ advisor_provider VARCHAR(40), advisor_api_key VARCHAR(500),
+ CONSTRAINT fk_user_settings_account FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
+);
