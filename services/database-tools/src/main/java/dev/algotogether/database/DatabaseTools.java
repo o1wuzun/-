@@ -10,7 +10,7 @@ import org.flywaydb.core.Flyway;
 /** Offline import and verification. Does not read another project's MySQL configuration. */
 public class DatabaseTools {
  static final ObjectMapper JSON=new ObjectMapper();
- static final Map<String,List<String>> TABLES=Map.of("identity",List.of("accounts","user_settings","group_requests","advisor_turns","advisor_generations","public_access_policy","public_access_invites","public_access_sessions","notifications","mail_jobs","deployed_groups"),"group",List.of("members","discussions","comments","event_log","replica_nodes"));
+ static final Map<String,List<String>> TABLES=Map.of("identity",List.of("accounts","user_settings","group_requests","oj_bindings","learning_points","daily_checkins","learning_awards","learning_plans","advisor_turns","advisor_generations","public_access_policy","public_access_invites","public_access_sessions","notifications","mail_jobs","deployed_groups"),"group",List.of("members","discussions","comments","event_log","replica_nodes"));
  static String text(JsonNode n,String field){String value=n.path(field).asText();if(value.isBlank())throw new IllegalArgumentException("Missing configuration: "+field);return value;}
  static String identifier(JsonNode n,String field){String value=text(n,field);if(!value.matches("[a-zA-Z0-9_]+"))throw new IllegalArgumentException("Invalid identifier");return value;}
  static String sqlSecret(JsonNode n,String field){String v=text(n,field);if(!v.matches("[a-zA-Z0-9_-]{32,100}"))throw new IllegalArgumentException("Invalid generated password");return v;}
