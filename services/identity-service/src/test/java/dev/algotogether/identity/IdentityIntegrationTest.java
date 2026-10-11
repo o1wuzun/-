@@ -32,10 +32,10 @@ class IdentityIntegrationTest {
         mvc.perform(put("/api/v1/users/me/integrations").header("Authorization","Bearer "+token).contentType("application/json").content("{\"oj_provider\":\"Codeforces\",\"oj_api_key\":\"oj-secret\",\"advisor_provider\":\"test-model\",\"advisor_api_key\":\"model-secret\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.data.integrations.advisor_api_key").doesNotExist()).andExpect(jsonPath("$.data.integrations.advisor_key_configured").value(true));
         mvc.perform(put("/api/v1/users/me/integrations").header("Authorization","Bearer "+token).contentType("application/json").content("{\"oj_provider\":\"Codeforces\",\"oj_api_key\":\"\",\"advisor_provider\":\"new-model\",\"advisor_api_key\":\"\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.data.integrations.advisor_key_configured").value(true));
 
-        String creation="{\"name\":\"普通用户学习组\",\"description\":\"用户创建权限测试\"}";
+        String creation="{\"name\":\"普通用户学习组\",\"description\":\"用户创建权限测试\",\"visibility\":\"PRIVATE\"}";
         mvc.perform(post("/api/v1/community/group-requests").contentType("application/json").content(creation)).andExpect(status().isUnauthorized());
         mvc.perform(post("/api/v1/community/group-requests").header("Authorization","Bearer "+token).contentType("application/json").content(creation)).andExpect(status().isCreated()).andExpect(jsonPath("$.data.status").value("PENDING"));
-        mvc.perform(get("/api/v1/community/group-requests").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data[0].NAME").value("普通用户学习组"));
+        mvc.perform(get("/api/v1/community/group-requests").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data[0].NAME").value("普通用户学习组")).andExpect(jsonPath("$.data[0].VISIBILITY").value("PRIVATE"));
         mvc.perform(get("/api/v1/admin/users").header("Authorization","Bearer "+token)).andExpect(status().isForbidden());
     }
 }

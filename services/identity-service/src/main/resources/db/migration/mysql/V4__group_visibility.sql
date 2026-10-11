@@ -1,0 +1,1 @@
+ALTER TABLE group_requests ADD COLUMN visibility VARCHAR(10) NOT NULL DEFAULT 'PUBLIC';

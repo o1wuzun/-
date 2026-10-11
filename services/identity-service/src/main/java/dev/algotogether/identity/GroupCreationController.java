@@ -16,10 +16,10 @@ public class GroupCreationController {
     private final JdbcTemplate db;
     private final TokenCodec tokens;
     public GroupCreationController(JdbcTemplate db,@Value("${identity.public-key}") String key){this.db=db;tokens=new TokenCodec(key,null);}
-    public record Creation(@NotBlank @Size(max=80) String name,@NotBlank @Size(max=500) String description){}
+    public record Creation(@NotBlank @Size(max=80) String name,@NotBlank @Size(max=500) String description,@jakarta.validation.constraints.Pattern(regexp="PUBLIC|PRIVATE") String visibility){}
     private String account(String h){String id=tokens.verify(h);if(db.queryForObject("SELECT COUNT(*) FROM accounts WHERE id=?",Integer.class,id)==0)throw Api.error(HttpStatus.UNAUTHORIZED,"账号不存在");return id;}
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
-    Api<?> create(@RequestHeader(value="Authorization",required=false) String h,@Valid @RequestBody Creation r){String user=account(h),id=UUID.randomUUID().toString();db.update("INSERT INTO group_requests(id,requested_by,name,description,status,created_at) VALUES(?,?,?,?,?,?)",id,user,r.name(),r.description(),"PENDING",Instant.now().toString());return Api.of(Map.of("id",id,"status","PENDING"));}
+    Api<?> create(@RequestHeader(value="Authorization",required=false) String h,@Valid @RequestBody Creation r){String user=account(h),id=UUID.randomUUID().toString();String visibility=r.visibility()==null?"PUBLIC":r.visibility();db.update("INSERT INTO group_requests(id,requested_by,name,description,status,created_at,visibility) VALUES(?,?,?,?,?,?,?)",id,user,r.name(),r.description(),"PENDING",Instant.now().toString(),visibility);return Api.of(Map.of("id",id,"status","PENDING","visibility",visibility));}
     @GetMapping
-    Api<?> own(@RequestHeader(value="Authorization",required=false) String h){String user=account(h);return Api.of(db.queryForList("SELECT id,name,description,status,created_at FROM group_requests WHERE requested_by=? ORDER BY created_at DESC",user));}
+    Api<?> own(@RequestHeader(value="Authorization",required=false) String h){String user=account(h);return Api.of(db.queryForList("SELECT id,name,description,status,visibility,created_at FROM group_requests WHERE requested_by=? ORDER BY created_at DESC",user));}
 }

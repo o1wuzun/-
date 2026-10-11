@@ -14,10 +14,10 @@ public class NotificationService {
     /** Called inside the approval transaction: both records commit with the decision. */
     @Transactional
     public void decision(String requestId, String status) {
-        var request = db.queryForMap("SELECT r.requested_by,r.name,a.email FROM group_requests r JOIN accounts a ON a.id=r.requested_by WHERE r.id=?", requestId);
+        var request = db.queryForMap("SELECT r.requested_by,r.name,r.visibility,a.email FROM group_requests r JOIN accounts a ON a.id=r.requested_by WHERE r.id=?", requestId);
         String id = UUID.randomUUID().toString();
         String title = "群组创建申请" + (status.equals("APPROVED") ? "已批准" : "已驳回");
-        String body = "你申请的群组「" + request.get("NAME") + "」" + (status.equals("APPROVED")
+        String body = "你申请的" + ("PRIVATE".equals(request.get("VISIBILITY"))?"私密":"公开") + "群组「" + request.get("NAME") + "」" + (status.equals("APPROVED")
                 ? "已获批准。群组仍需部署独立服务与数据库；批准不代表群组已经可连接。部署完成后请在群组入口查看。"
                 : "未获批准。你可以调整申请内容后重新申请。");
         db.update("INSERT INTO notifications(id,user_id,request_id,title,body,created_at,is_read) VALUES(?,?,?,?,?,?,FALSE)",
