@@ -68,3 +68,5 @@ pwsh -File scripts/stop-dev.ps1
 原 Python 版本保持在 app/，可继续用 8000 端口运行；Git 标签 prototype-python-v1 和 backups/python-prototype-v1.zip 可用于回退。两个版本当前数据不自动迁移。
 
 本地 MySQL 部署、Flyway 版本迁移、数据核验、备份和回退限制见 [MYSQL.md](MYSQL.md)。
+
+群组审批通知已接入事务 outbox、RabbitMQ 和 SMTP，前端提供“消息与申请”和管理员“邮件投递”。支持失败退避、投递去重、故障恢复与人工重试。审批邮件不包含基础设施密钥，批准仍不代表群组部署完成。运行与验证见 [NOTIFICATIONS.md](NOTIFICATIONS.md)。

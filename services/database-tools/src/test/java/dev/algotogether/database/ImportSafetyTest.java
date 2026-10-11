@@ -4,6 +4,14 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 class ImportSafetyTest {
+ @Test void oldH2SnapshotMayLackNewNotificationTables()throws Exception{
+  try(var a=database();var b=database()){
+   for(var table:List.of("notifications","mail_jobs"))try(var s=b.createStatement()){s.execute("CREATE TABLE "+table+"(id VARCHAR(36) PRIMARY KEY)");}
+   DatabaseTools.copy(a,b,List.of("notifications","mail_jobs"));
+   assertEquals(DatabaseTools.fingerprint(a,"notifications"),DatabaseTools.fingerprint(b,"notifications"));
+   assertEquals(DatabaseTools.fingerprint(a,"mail_jobs"),DatabaseTools.fingerprint(b,"mail_jobs"));
+  }
+ }
  Connection database()throws Exception{return DriverManager.getConnection("jdbc:h2:mem:"+UUID.randomUUID(),"sa","");}
  @Test void preservesUnicodeNullsAndRefusesToOverwriteExistingData()throws Exception{
   try(var a=database();var b=database()){

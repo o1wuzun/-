@@ -10,7 +10,7 @@ import org.flywaydb.core.Flyway;
 /** Offline import and verification. Does not read another project's MySQL configuration. */
 public class DatabaseTools {
  static final ObjectMapper JSON=new ObjectMapper();
- static final Map<String,List<String>> TABLES=Map.of("identity",List.of("accounts","user_settings","group_requests","advisor_turns","advisor_generations","public_access_policy","public_access_invites","public_access_sessions"),"group",List.of("members","discussions","comments","event_log","replica_nodes"));
+ static final Map<String,List<String>> TABLES=Map.of("identity",List.of("accounts","user_settings","group_requests","advisor_turns","advisor_generations","public_access_policy","public_access_invites","public_access_sessions","notifications","mail_jobs"),"group",List.of("members","discussions","comments","event_log","replica_nodes"));
  static String text(JsonNode n,String field){String value=n.path(field).asText();if(value.isBlank())throw new IllegalArgumentException("Missing configuration: "+field);return value;}
  static String identifier(JsonNode n,String field){String value=text(n,field);if(!value.matches("[a-zA-Z0-9_]+"))throw new IllegalArgumentException("Invalid identifier");return value;}
  static String sqlSecret(JsonNode n,String field){String v=text(n,field);if(!v.matches("[a-zA-Z0-9_-]{32,100}"))throw new IllegalArgumentException("Invalid generated password");return v;}
@@ -56,22 +56,28 @@ public class DatabaseTools {
   target.setAutoCommit(false);
   try{
    if(tables.contains("public_access_policy"))try(var s=target.createStatement()){s.executeUpdate("DELETE FROM public_access_policy");}
-   for(String table:tables)try(var s=source.createStatement();var r=s.executeQuery("SELECT * FROM "+table)){
+   for(String table:tables){if(optionalTableMissing(source,table))continue;try(var s=source.createStatement();var r=s.executeQuery("SELECT * FROM "+table)){
     var md=r.getMetaData();int count=md.getColumnCount();var columns=new ArrayList<String>();for(int i=1;i<=count;i++)columns.add("`"+md.getColumnName(i).toLowerCase(Locale.ROOT)+"`");
     try(var insert=target.prepareStatement("INSERT INTO `"+table+"`("+String.join(",",columns)+") VALUES("+String.join(",",Collections.nCopies(count,"?"))+")")){
      int batch=0;while(r.next()){for(int i=1;i<=count;i++){Object value=r.getObject(i);if(value instanceof Clob)insert.setString(i,r.getString(i));else insert.setObject(i,value);}insert.addBatch();if(++batch%200==0)insert.executeBatch();}insert.executeBatch();
     }
-   }
+   }}
    for(String table:tables)if(!fingerprint(source,table).equals(fingerprint(target,table)))throw new IllegalStateException("Import content mismatch: "+table);
    target.commit();
   }catch(Exception e){target.rollback();throw e;}finally{target.setAutoCommit(true);}
  }
  static Map<String,Object> fingerprint(Connection c,String table)throws Exception{
+  if(optionalTableMissing(c,table))return Map.of("count",0L,"digest",HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest()));
   var keys=new TreeMap<Integer,String>();try(var r=c.getMetaData().getPrimaryKeys(c.getCatalog(),null,c.getMetaData().getDatabaseProductName().equals("H2")?table.toUpperCase(Locale.ROOT):table)){while(r.next())keys.put(r.getInt("KEY_SEQ"),r.getString("COLUMN_NAME"));}
   if(keys.isEmpty())throw new IllegalStateException("Missing primary key: "+table);
   var digest=MessageDigest.getInstance("SHA-256");long count=0;
-  try(var s=c.createStatement();var r=s.executeQuery("SELECT * FROM "+table+" ORDER BY "+String.join(",",keys.values()))){int n=r.getMetaData().getColumnCount();while(r.next()){count++;for(int i=1;i<=n;i++){String column=r.getMetaData().getColumnName(i).toLowerCase(Locale.ROOT);String value=Set.of("enabled","consumed","revoked").contains(column)?Boolean.toString(r.getBoolean(i)):r.getString(i);String part=r.wasNull()?"N;":"V"+value.length()+":"+value+";";digest.update(part.getBytes(StandardCharsets.UTF_8));}}}
+  try(var s=c.createStatement();var r=s.executeQuery("SELECT * FROM "+table+" ORDER BY "+String.join(",",keys.values()))){int n=r.getMetaData().getColumnCount();while(r.next()){count++;for(int i=1;i<=n;i++){String column=r.getMetaData().getColumnName(i).toLowerCase(Locale.ROOT);String value=Set.of("enabled","consumed","revoked","is_read").contains(column)?Boolean.toString(r.getBoolean(i)):r.getString(i);String part=r.wasNull()?"N;":"V"+value.length()+":"+value+";";digest.update(part.getBytes(StandardCharsets.UTF_8));}}}
   return Map.of("count",count,"digest",HexFormat.of().formatHex(digest.digest()));
+ }
+ // Old offline H2 snapshots legitimately predate the notification schema.
+ static boolean optionalTableMissing(Connection c,String table)throws SQLException{
+  if(!Set.of("notifications","mail_jobs").contains(table)||!c.getMetaData().getDatabaseProductName().equals("H2"))return false;
+  try(var r=c.getMetaData().getTables(null,null,table.toUpperCase(Locale.ROOT),new String[]{"TABLE"})){return !r.next();}
  }
  static void backup(JsonNode config,Path root)throws Exception{
   Path directory=root.resolve("data/mysql-backups/"+java.time.Instant.now().toString().replace(':','-'));Files.createDirectories(directory);

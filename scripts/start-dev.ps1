@@ -47,12 +47,27 @@ function DatabaseFor($id){
  }else{$env:SPRING_PROFILES_ACTIVE='';$env:DB_PASSWORD=''}
 }
 DatabaseFor 'identity'
+# SMTP/broker secrets live in the ignored data directory and only enter identity.
+$notificationPath=Join-Path $dataRoot 'notifications.json'
+$notificationVariables=@()
+if(Test-Path -LiteralPath $notificationPath){
+ $notificationConfig=Get-Content -LiteralPath $notificationPath -Raw|ConvertFrom-Json
+ if($notificationConfig.enabled){
+  $env:SPRING_PROFILES_ACTIVE=if($env:SPRING_PROFILES_ACTIVE){$env:SPRING_PROFILES_ACTIVE+',notifications'}else{'notifications'}
+  $allowed=@('RABBITMQ_HOST','RABBITMQ_PORT','RABBITMQ_USER','RABBITMQ_PASSWORD','RABBITMQ_VHOST','SMTP_HOST','SMTP_PORT','SMTP_USER','SMTP_PASSWORD','SMTP_FROM','SMTP_AUTH','SMTP_STARTTLS','SMTP_SSL')
+  foreach($item in $notificationConfig.environment.PSObject.Properties){
+   if($item.Name -notin $allowed){throw 'Unknown notification configuration variable.'}
+   [Environment]::SetEnvironmentVariable($item.Name,[string]$item.Value,'Process');$notificationVariables+= $item.Name
+  }
+ }
+}
 $env:IDENTITY_DB_URL = 'jdbc:h2:file:./data/identity'
 $env:GROUP_DB_URL = 'jdbc:h2:file:./data/group-default'
 $env:GROUP_PORT='8082'
 $env:GROUP_ID='group-default'
 $env:GROUP_NAME='算法基础学习组'
 $identity = Start-Process java -ArgumentList @('-jar',('"'+$identityJar+'"')) -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'identity.out.log') -RedirectStandardError (Join-Path $dataRoot 'identity.err.log')
+foreach($variable in $notificationVariables){[Environment]::SetEnvironmentVariable($variable,$null,'Process')}
 # Private signing material belongs exclusively to the identity process.
 Remove-Item Env:IDENTITY_PRIVATE_KEY
 Remove-Item Env:PUBLIC_ACCESS_GATEWAY_KEY
