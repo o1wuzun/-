@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test'
 import {randomUUID} from 'node:crypto'
 test('requester receives approval feedback and can mark it read',async({browser})=>{
+ test.setTimeout(120000)
  test.skip(!process.env.TEST_ADMIN_EMAIL||!process.env.TEST_ADMIN_PASSWORD,'Local administrator credentials required')
  const memberContext=await browser.newContext(),adminContext=await browser.newContext()
  try{
@@ -37,9 +38,21 @@ test('requester receives approval feedback and can mark it read',async({browser}
   await expect(notice).toContainText('已读')
   await member.reload()
   await member.getByRole('button',{name:'消息与申请',exact:true}).click()
-  await expect(member.locator('.member').filter({hasText:name})).toContainText('已批准，待部署')
+  const application=member.locator('.member').filter({hasText:name})
+  await expect(application).toContainText('已批准')
+  await application.getByRole('button',{name:'一键部署本地群组',exact:true}).click()
+  await expect(application).toContainText('已部署',{timeout:90000})
   await member.screenshot({path:test.info().outputPath('notifications-desktop.png'),fullPage:true})
   await member.setViewportSize({width:390,height:844})
   await expect.poll(()=>member.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)
+  await member.setViewportSize({width:1366,height:900})
+  await member.getByRole('button',{name:'◇ 群组入口',exact:true}).click()
+  const groupCard=member.locator('article').filter({has:member.getByRole('heading',{name,exact:true})})
+  await groupCard.getByRole('button').click()
+  await expect(member.locator('.dialog').getByLabel('群主分享的联网密钥')).toHaveCount(0)
+  await member.locator('.dialog').getByRole('button',{name:'确认',exact:true}).click()
+  await member.getByRole('button',{name:'⌂ 群组首页',exact:true}).click()
+  await expect(member.locator('h1')).toHaveText(name)
+  await expect(member.locator('.group-home')).toContainText('公开群组')
  }finally{await memberContext.close();await adminContext.close()}
 })

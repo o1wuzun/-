@@ -70,3 +70,5 @@ pwsh -File scripts/stop-dev.ps1
 本地 MySQL 部署、Flyway 版本迁移、数据核验、备份和回退限制见 [MYSQL.md](MYSQL.md)。
 
 群组审批通知已接入事务 outbox、RabbitMQ 和 SMTP，前端提供“消息与申请”和管理员“邮件投递”。支持失败退避、投递去重、故障恢复与人工重试。审批邮件不包含基础设施密钥，批准仍不代表群组部署完成。运行与验证见 [NOTIFICATIONS.md](NOTIFICATIONS.md)。
+
+已批准申请支持申请人一键部署本机独立群组，包含独立 MySQL 数据库、独立 JVM、就绪检查、动态目录和前端代理，详见 [LOCAL-GROUP-DEPLOYMENT.md](LOCAL-GROUP-DEPLOYMENT.md)。

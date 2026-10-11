@@ -23,7 +23,7 @@ public class GroupController {
     }
     private String member(String header){String user=tokens.verify(header);if(db.queryForObject("SELECT COUNT(*) FROM members WHERE user_id=? AND revoked=FALSE",Integer.class,user)==0)throw Api.error(HttpStatus.NOT_FOUND,"尚未加入该群组或成员资格已撤销");return user;}
     private void event(String kind,Object payload){try{db.update("INSERT INTO event_log(event_id,kind,payload,created_at) VALUES(?,?,?,?)",UUID.randomUUID().toString(),kind,json.writeValueAsString(payload),Instant.now().toString());}catch(Exception e){throw new IllegalStateException(e);}}
-    public record Join(@NotBlank String join_key,@NotBlank @Size(max=40)String nickname,@NotBlank @Size(max=80)String host_name){}
+    public record Join(String join_key,@NotBlank @Size(max=40)String nickname,@NotBlank @Size(max=80)String host_name){}
     public record Discussion(@NotBlank @Size(max=100)String title,@NotBlank @Size(max=20000)String body){}
     public record Comment(@NotBlank @Size(max=5000) String body){}
     private void discussionExists(String post){if(db.queryForObject("SELECT COUNT(*) FROM discussions WHERE id=?",Integer.class,post)==0)throw Api.error(HttpStatus.NOT_FOUND,"讨论不存在");}
@@ -35,7 +35,7 @@ public class GroupController {
     @PostMapping("/join") @Transactional
     Api<?> join(@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Join r){
         String user=tokens.verify(h);
-        if(!MessageDigest.isEqual(joinKey.getBytes(StandardCharsets.UTF_8),r.join_key().getBytes(StandardCharsets.UTF_8)))throw Api.error(HttpStatus.FORBIDDEN,"联网密钥无效");
+        if(!"PUBLIC".equals(visibility)&&!MessageDigest.isEqual(joinKey.getBytes(StandardCharsets.UTF_8),(r.join_key()==null?"":r.join_key()).getBytes(StandardCharsets.UTF_8)))throw Api.error(HttpStatus.FORBIDDEN,"联网密钥无效");
         var rows=db.queryForList("SELECT revoked FROM members WHERE user_id=?",user);
         if(!rows.isEmpty()&&Boolean.TRUE.equals(rows.getFirst().get("REVOKED")))throw Api.error(HttpStatus.FORBIDDEN,"成员资格已撤销，请联系群主");
         dev.algotogether.persistence.PortableUpsert.execute(db,"UPDATE members SET nickname=?,host_name=?,last_seen=? WHERE user_id=? AND revoked=FALSE",new Object[]{r.nickname(),r.host_name(),Instant.now().getEpochSecond(),user},"INSERT INTO members(user_id,nickname,host_name,last_seen,revoked) VALUES(?,?,?,?,FALSE)",new Object[]{user,r.nickname(),r.host_name(),Instant.now().getEpochSecond()});

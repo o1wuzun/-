@@ -47,6 +47,7 @@ function DatabaseFor($id){
  }else{$env:SPRING_PROFILES_ACTIVE='';$env:DB_PASSWORD=''}
 }
 DatabaseFor 'identity'
+$env:DEPLOYMENT_LOCAL_ENABLED=if($Database -eq 'mysql'){'true'}else{'false'};$env:DEPLOYMENT_LOCAL_SHELL=(Get-Command pwsh).Source
 # SMTP/broker secrets live in the ignored data directory and only enter identity.
 $notificationPath=Join-Path $dataRoot 'notifications.json'
 $notificationVariables=@()
@@ -66,7 +67,7 @@ $env:GROUP_DB_URL = 'jdbc:h2:file:./data/group-default'
 $env:GROUP_PORT='8082'
 $env:GROUP_ID='group-default'
 $env:GROUP_NAME='算法基础学习组'
-$env:GROUP_VISIBILITY='PUBLIC';$env:GROUP_DESCRIPTION='从二分查找与数据结构开始'
+$env:GROUP_VISIBILITY='PRIVATE';$env:GROUP_DESCRIPTION='从二分查找与数据结构开始'
 $identity = Start-Process java -ArgumentList @('-jar',('"'+$identityJar+'"')) -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'identity.out.log') -RedirectStandardError (Join-Path $dataRoot 'identity.err.log')
 foreach($variable in $notificationVariables){[Environment]::SetEnvironmentVariable($variable,$null,'Process')}
 # Private signing material belongs exclusively to the identity process.
@@ -77,7 +78,7 @@ $group = Start-Process java -ArgumentList @('-jar',('"'+$groupJar+'"')) -Working
 $env:GROUP_PORT='8083'
 $env:GROUP_ID='group-contest'
 $env:GROUP_NAME='算法竞赛练习组'
-$env:GROUP_VISIBILITY='PUBLIC';$env:GROUP_DESCRIPTION='分享比赛思路和解题经验'
+$env:GROUP_VISIBILITY='PRIVATE';$env:GROUP_DESCRIPTION='分享比赛思路和解题经验'
 $env:GROUP_DB_URL='jdbc:h2:file:./data/group-contest'
 $env:GROUP_JOIN_KEY=$keys.contest_join_key
 DatabaseFor 'contest'

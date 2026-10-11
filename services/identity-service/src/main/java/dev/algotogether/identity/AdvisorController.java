@@ -35,8 +35,9 @@ public class AdvisorController {
     private long generation(String user,String group,boolean lock){return db.queryForObject("SELECT generation FROM advisor_generations WHERE user_id=? AND group_id=?"+(lock?" FOR UPDATE":""),Long.class,user,group);}
     static void validateEndpoint(String value){try{URI uri=URI.create(value);if(uri.getHost()==null||uri.getUserInfo()!=null||uri.getFragment()!=null||!("https".equals(uri.getScheme())||("http".equals(uri.getScheme())&&Set.of("localhost","127.0.0.1","[::1]").contains(uri.getHost()))))throw new IllegalArgumentException();}catch(Exception e){throw Api.error(HttpStatus.BAD_REQUEST,"模型接口地址必须为 HTTPS 完整地址；本机接口可使用 http://127.0.0.1");}}
     public record Question(@NotBlank String group_id,@NotBlank @Size(max=4000) String question,@NotBlank String consent){}
+    private String groupUrl(String id){String configured=groups.get(id);if(configured!=null)return configured;var rows=db.queryForList("SELECT port FROM deployed_groups WHERE id=? AND status='READY'",id);return rows.isEmpty()?null:"http://127.0.0.1:"+rows.getFirst().get("PORT");}
     private void membership(String h,String group) throws Exception {
-        String base=groups.get(group);if(base==null)throw Api.error(HttpStatus.NOT_FOUND,"群组尚未配置顾问连接");
+        String base=groupUrl(group);if(base==null)throw Api.error(HttpStatus.NOT_FOUND,"群组尚未配置顾问连接");
         var response=http.send(HttpRequest.newBuilder(URI.create(base+"/api/v1/group/members")).timeout(Duration.ofSeconds(8)).header("Authorization",h).GET().build(),HttpResponse.BodyHandlers.discarding());
         if(response.statusCode()==401)throw Api.error(HttpStatus.UNAUTHORIZED,"登录已失效");
         if(response.statusCode()==403||response.statusCode()==404)throw Api.error(HttpStatus.FORBIDDEN,"只有当前群组成员可使用顾问");
@@ -53,7 +54,7 @@ public class AdvisorController {
         try{return generate(h,q,user);}finally{active.remove(key);}
     }
     private Api<?> generate(String h,Question q,String user){
-        String base=groups.get(q.group_id());
+        String base=groupUrl(q.group_id());
         if(base==null)throw Api.error(HttpStatus.NOT_FOUND,"群组尚未配置顾问连接");
         if(!"share-group-context".equals(q.consent()))throw Api.error(HttpStatus.BAD_REQUEST,"请确认向模型服务发送当前群组讨论和问题");
         try {

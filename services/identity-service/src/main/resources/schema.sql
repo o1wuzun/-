@@ -59,3 +59,13 @@ CREATE TABLE IF NOT EXISTS mail_jobs (
  FOREIGN KEY(notification_id) REFERENCES notifications(id)
 );
 CREATE INDEX IF NOT EXISTS idx_mail_jobs_due ON mail_jobs(status,next_attempt_at);
+ALTER TABLE group_requests ADD COLUMN IF NOT EXISTS deployment_error VARCHAR(300);
+ALTER TABLE group_requests ADD COLUMN IF NOT EXISTS visibility VARCHAR(10) NOT NULL DEFAULT 'PUBLIC';
+ALTER TABLE group_requests ADD COLUMN IF NOT EXISTS deployment_status VARCHAR(20) NOT NULL DEFAULT 'NOT_DEPLOYED';
+ALTER TABLE group_requests ADD COLUMN IF NOT EXISTS deployed_at VARCHAR(40);
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS delivered_at VARCHAR(30);
+CREATE TABLE IF NOT EXISTS deployed_groups (
+ id VARCHAR(80) PRIMARY KEY, request_id VARCHAR(36) NOT NULL UNIQUE, owner_id VARCHAR(36) NOT NULL,
+ name VARCHAR(80) NOT NULL, description VARCHAR(500) NOT NULL, visibility VARCHAR(10) NOT NULL,
+ port INT NOT NULL UNIQUE, join_key VARCHAR(100) NOT NULL, status VARCHAR(20) NOT NULL
+);
