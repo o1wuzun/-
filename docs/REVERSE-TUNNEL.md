@@ -1,5 +1,28 @@
 # 出站中继部署与验收
 
+## 用当前电脑作为公网主机
+
+已提供 Windows 启动流程：当前电脑运行身份服务、两个群组服务、反向中继与出站连接端。公网入口通过 Cloudflare 临时隧道到达本机 8098 网关。网关仅提供构建后的前端和明确的社区 API，不公开 Vite 开发服务、项目目录、数据库或本机凭证文件。
+
+首次使用：
+
+```powershell
+mvn package
+npm --prefix frontend ci
+npm --prefix frontend run build
+pwsh -File scripts/install-cloudflared.ps1
+pwsh -File scripts/start-dev.ps1
+pwsh -File scripts/start-public.ps1
+```
+
+已有社区服务运行时跳过 start-dev。安装脚本从 Cloudflare 官方 GitHub 下载连接程序并验证 Windows 发布者签名。连接端自动选择 QUIC 或 HTTP/2；启动脚本先检查连接就绪，再显示 HTTPS 地址。该地址保存在被 Git 忽略的 `data/public-processes.json`。不需要路由器端口转发或公网 IP，电脑需保持联网、开机且不休眠。临时域名重启后可能变化，Cloudflare 负责公网转发及 HTTPS；长期使用需要命名隧道和固定域名。临时隧道服务不保证持续可用。
+
+本地预检可用 `pwsh -File scripts/start-public.ps1 -LocalOnly`，不会建立外部隧道。`pwsh -File scripts/stop-public.ps1` 只停止公网连接、网关、中继和群组连接端，保留社区服务；随后执行 stop-dev 可停止社区。
+
+公网验收：`pwsh -File scripts/test-public.ps1` 经真实公网 HTTPS 入口验证注册登录、入组、两个用户发布回复、组间访问限制及私密文件拒绝。此脚本从主机发出请求，仍需手机关闭 Wi-Fi 后通过移动网络打开显示的 URL，并与电脑上的另一个成员测试讨论回复，才能确认独立网络设备体验。
+
+本机公网模式下，顾问仍从本机群组服务读取上下文。外部成员及其他主机的副本可使用 `https://临时域名/groups/group-default` 作为群组源地址；另外的群组主机连接此中继时使用该域名作为 TUNNEL_RELAY_URL，并由主机维护者私下配置独立中继凭证。中继凭证在 `data/relay-keys.json`，它与群组邀请密钥、成员登录和节点复制凭证分别独立，不能公开分享。
+
 ## 架构
 
 公网服务器运行 relay-service。每个内网群组主机运行自己的 group-service 和 tunnel-client。主机使用 HTTPS 主动轮询中继，不需要为群组服务开放入站端口。外部成员访问 `/groups/{group_id}/api/v1/group/...`，中继将请求放入对应群组的有界队列，主机执行请求并回传响应。该方案是反向 HTTP 中继，不是直接 P2P 打洞。
@@ -71,4 +94,4 @@ community.example.com {
 
 该原型的中继队列不持久化，连接端逐个处理请求；服务重启时尚未完成的请求会失败。暂无多连接负载分担、跨中继故障转移或 WebSocket/SSE 透传。已实现的 HTTP 讨论、回复、成员心跳、节点复制可通过中继传输。
 
-真实跨网络验收需要部署者提供可访问的公网服务器、域名和 HTTPS，并从不同网络的两台设备测试。当前会话没有这些部署资源，尚未执行该项验收。
+真实跨网络验收需要部署者提供可访问的公网服务器、域名和 HTTPS，并从不同网络的两台设备测试。当前已使用本机主机加 Cloudflare 临时隧道接通真实公网 HTTPS 入口，并通过主机经公网边缘执行双用户交流测试；独立网络设备验收尚待手机移动网络执行。
