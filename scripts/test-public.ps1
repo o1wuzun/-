@@ -1,16 +1,19 @@
-param([string]$BaseUrl)
+param([string]$BaseUrl,[Parameter(Mandatory=$true)][string]$InviteToken)
 $ErrorActionPreference='Stop'
 $projectRoot=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 if(!$BaseUrl){$BaseUrl=(Get-Content (Join-Path $projectRoot 'data/public-processes.json') -Raw|ConvertFrom-Json).url}
 if(!$BaseUrl -or ([Uri]$BaseUrl).Scheme -ne 'https'){throw 'Provide the public HTTPS URL.'}
 $BaseUrl=$BaseUrl.TrimEnd('/')
+$exchange=Invoke-WebRequest "$BaseUrl/access/exchange" -Method POST -ContentType 'application/json' -Body (@{token=$InviteToken}|ConvertTo-Json) -TimeoutSec 30
+$accessCookie=($exchange.Headers['Set-Cookie'][0] -split ';')[0]
 function Call($route,$headers=@{},$method='GET',$body=$null){
- $params=@{Uri=$BaseUrl+$route;Method=$method;Headers=$headers;TimeoutSec=45}
+ $merged=@{Cookie=$accessCookie};foreach($key in $headers.Keys){$merged[$key]=$headers[$key]}
+ $params=@{Uri=$BaseUrl+$route;Method=$method;Headers=$merged;TimeoutSec=45}
  if($null -ne $body){$params.ContentType='application/json';$params.Body=$body|ConvertTo-Json -Depth 6}
  (Invoke-RestMethod @params).data
 }
 function Denied($route,$code,$headers=@{}){try{Call $route $headers|Out-Null;throw 'Unexpected access'}catch{if(!$_.Exception.Response -or [int]$_.Exception.Response.StatusCode -ne $code){throw}}}
-$page=Invoke-WebRequest "$BaseUrl/" -TimeoutSec 30
+$page=Invoke-WebRequest "$BaseUrl/" -Headers @{Cookie=$accessCookie} -TimeoutSec 30
 if($page.StatusCode -ne 200 -or $page.Content -notmatch '/assets/'){throw 'Public built frontend failed'}
 $catalog=Call '/identity/api/v1/community/groups'
 if(@($catalog).Count -lt 2){throw 'Public group directory failed'}

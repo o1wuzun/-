@@ -30,3 +30,15 @@ CREATE TABLE IF NOT EXISTS advisor_generations (
  user_id VARCHAR(36) NOT NULL, group_id VARCHAR(80) NOT NULL, generation BIGINT NOT NULL DEFAULT 0,
  PRIMARY KEY(user_id,group_id)
 );
+CREATE TABLE IF NOT EXISTS public_access_policy (
+ id INT PRIMARY KEY, enabled BOOLEAN NOT NULL DEFAULT FALSE, generation BIGINT NOT NULL DEFAULT 0
+);
+INSERT INTO public_access_policy(id,enabled,generation) SELECT 1,FALSE,0 WHERE NOT EXISTS(SELECT 1 FROM public_access_policy WHERE id=1);
+CREATE TABLE IF NOT EXISTS public_access_invites (
+ id VARCHAR(36) PRIMARY KEY, name VARCHAR(80) NOT NULL, token_hash VARCHAR(64) NOT NULL UNIQUE,
+ expires_at BIGINT NOT NULL, created_at BIGINT NOT NULL, consumed BOOLEAN NOT NULL, revoked BOOLEAN NOT NULL
+);
+CREATE TABLE IF NOT EXISTS public_access_sessions (
+ token_hash VARCHAR(64) PRIMARY KEY, invite_id VARCHAR(36) NOT NULL, generation BIGINT NOT NULL, expires_at BIGINT NOT NULL,
+ FOREIGN KEY(invite_id) REFERENCES public_access_invites(id)
+);

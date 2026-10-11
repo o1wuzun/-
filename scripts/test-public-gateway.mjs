@@ -10,10 +10,10 @@ test('gateway publishes built assets and forwards only community APIs',async()=>
  const root=await mkdtemp(path.join(os.tmpdir(),'community-gateway-'))
  await writeFile(path.join(root,'index.html'),'<h1>Community</h1>')
  const seen=[]
- const backend=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{seen.push({path:req.url,authorization:req.headers.authorization,body});res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({data:'ok'}))})})
+ const backend=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{if(req.url==='/api/v1/internal/public-access/check'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({data:{allowed:true,enabled:true}}));return}seen.push({path:req.url,authorization:req.headers.authorization,body});res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({data:'ok'}))})})
  await new Promise(resolve=>backend.listen(0,'127.0.0.1',resolve))
  const port=backend.address().port
- const gateway=createGateway({identityPort:port,relayPort:port,staticRoot:root})
+ const gateway=createGateway({identityPort:port,relayPort:port,staticRoot:root,gatewayKey:"x".repeat(32)})
  await new Promise(resolve=>gateway.listen(0,'127.0.0.1',resolve))
  const base='http://127.0.0.1:'+gateway.address().port
  try{
@@ -26,4 +26,38 @@ test('gateway publishes built assets and forwards only community APIs',async()=>
   assert.equal((await fetch(base+'/identity/api/v1/auth/login',{method:'POST',body:'x'.repeat(524289)})).status,413)
   assert.equal(seen.length,2)
  }finally{gateway.closeAllConnections();backend.closeAllConnections();await Promise.all([new Promise(r=>gateway.close(r)),new Promise(r=>backend.close(r))]);await rm(root,{recursive:true,force:true})}
+})
+
+test('perimeter denies pages and APIs, exchanges Secure cookies and fails closed',async()=>{
+ const root=await mkdtemp(path.join(os.tmpdir(),'community-access-'))
+ await writeFile(path.join(root,'index.html'),'private frontend')
+ let enabled=false,used=false,hits=0
+ const backend=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{
+  res.setHeader('Content-Type','application/json')
+  if(req.url.startsWith('/api/v1/internal/public-access/')){
+   assert.equal(req.headers.authorization,'Bearer '+'x'.repeat(32))
+   const data=JSON.parse(body)
+   if(req.url.endsWith('/check'))return res.end(JSON.stringify({data:{enabled,allowed:enabled&&(data.device||data.session==='valid-session')}}))
+   if(!enabled||used||data.token!=='single-use-invite'){res.statusCode=403;return res.end(JSON.stringify({error:{message:'邀请无效'}}))}
+   used=true;return res.end(JSON.stringify({data:{session:'valid-session',max_age:3600}}))
+  }
+  hits++;res.end(JSON.stringify({data:'protected-api'}))
+ })})
+ await new Promise(r=>backend.listen(0,'127.0.0.1',r));const port=backend.address().port
+ const gateway=createGateway({identityPort:port,relayPort:port,staticRoot:root,gatewayKey:'x'.repeat(32)})
+ await new Promise(r=>gateway.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+gateway.address().port
+ try{
+  for(const route of ['/','/assets/test.js','/identity/api/v1/auth/login','/groups/group-default/api/v1/group'])assert.equal((await fetch(base+route)).status,403)
+  assert.equal(hits,0)
+  assert.match(await(await fetch(base+'/access')).text(),/社区访问邀请/)
+  enabled=true
+  const response=await fetch(base+'/access/exchange',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'single-use-invite'})})
+  assert.equal(response.status,200);const cookie=response.headers.get('set-cookie');for(const flag of ['HttpOnly','Secure','SameSite=Strict','Path=/'])assert.ok(cookie.includes(flag));assert.ok(!(await response.text()).includes('valid-session'))
+  assert.equal((await fetch(base+'/',{headers:{Cookie:cookie}})).status,200)
+  assert.equal((await fetch(base+'/identity/api/v1/internal/public-access/check',{headers:{Cookie:cookie}})).status,404)
+  assert.equal((await fetch(base+'/access/exchange',{method:'POST',body:JSON.stringify({token:'single-use-invite'})})).status,403)
+  assert.equal((await fetch(base+'/access/exchange',{method:'POST',headers:{Origin:'https://untrusted.example'},body:'{}'})).status,403)
+  enabled=false;assert.equal((await fetch(base+'/',{headers:{Cookie:cookie}})).status,403)
+  await new Promise(r=>backend.close(r));assert.equal((await fetch(base+'/',{headers:{Cookie:cookie}})).status,503)
+ }finally{gateway.closeAllConnections();backend.closeAllConnections();await new Promise(r=>gateway.close(r));await rm(root,{recursive:true,force:true})}
 })

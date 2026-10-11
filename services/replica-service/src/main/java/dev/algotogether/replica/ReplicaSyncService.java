@@ -11,7 +11,7 @@ public class ReplicaSyncService {
     public record ApiEnvelope(String request_id,Payload data,Map<String,Object> meta){}
     public record Payload(String group_id,List<Map<String,Object>> events,long next_cursor,boolean has_more){}
     private final ReplicaStore store;private final RestClient client;private final String credential;
-    public ReplicaSyncService(ReplicaStore store,RestClient.Builder builder,@Value("${replica.source-url}")String source,@Value("${replica.node-credential}")String credential){this.store=store;this.credential=credential;client=builder.baseUrl(source).build();}
+    public ReplicaSyncService(ReplicaStore store,RestClient.Builder builder,@Value("${replica.source-url}")String source,@Value("${replica.node-credential}")String credential,@Value("${replica.public-access-session:}")String accessSession){this.store=store;this.credential=credential;if(!accessSession.isBlank())builder.defaultHeader("X-Public-Access",accessSession);client=builder.baseUrl(source).build();}
     @Scheduled(fixedDelayString="${replica.poll-ms:5000}") public void scheduled(){if(credential==null||credential.isBlank())return;sync();}
     public synchronized void sync(){
         try {

@@ -13,3 +13,4 @@ replica:
   source-url: ${REPLICA_SOURCE_URL:http://127.0.0.1:8082}
   node-credential: ${REPLICA_NODE_CREDENTIAL:}
   poll-ms: ${REPLICA_POLL_MS:5000}
+  public-access-session: ${REPLICA_PUBLIC_ACCESS_SESSION:}

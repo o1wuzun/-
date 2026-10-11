@@ -19,7 +19,7 @@ pwsh -File scripts/start-public.ps1
 
 本地预检可用 `pwsh -File scripts/start-public.ps1 -LocalOnly`，不会建立外部隧道。`pwsh -File scripts/stop-public.ps1` 只停止公网连接、网关、中继和群组连接端，保留社区服务；随后执行 stop-dev 可停止社区。
 
-公网验收：`pwsh -File scripts/test-public.ps1` 经真实公网 HTTPS 入口验证注册登录、入组、两个用户发布回复、组间访问限制及私密文件拒绝。此脚本从主机发出请求，仍需手机关闭 Wi-Fi 后通过移动网络打开显示的 URL，并与电脑上的另一个成员测试讨论回复，才能确认独立网络设备体验。
+公网验收：管理员启用访问并生成测试邀请后运行 `pwsh -File scripts/test-public.ps1 -InviteToken <一次性测试邀请>` 经真实公网 HTTPS 入口验证注册登录、入组、两个用户发布回复、组间访问限制及私密文件拒绝。此脚本从主机发出请求，仍需手机关闭 Wi-Fi 后通过移动网络打开显示的 URL，并与电脑上的另一个成员测试讨论回复，才能确认独立网络设备体验。
 
 本机公网模式下，顾问仍从本机群组服务读取上下文。外部成员及其他主机的副本可使用 `https://临时域名/groups/group-default` 作为群组源地址；另外的群组主机连接此中继时使用该域名作为 TUNNEL_RELAY_URL，并由主机维护者私下配置独立中继凭证。中继凭证在 `data/relay-keys.json`，它与群组邀请密钥、成员登录和节点复制凭证分别独立，不能公开分享。
 
@@ -60,27 +60,11 @@ java -jar services/tunnel-client/target/tunnel-client-0.1.0-SNAPSHOT.jar
 
 ## 公网入口示例
 
-Caddy 的域名 HTTPS 入口（替换域名和前端发布目录）：
+Caddy 的域名 HTTPS 入口（本机运行 public-gateway.mjs，配置 PUBLIC_ACCESS_GATEWAY_KEY 与身份服务一致）：
 
 ```caddyfile
 community.example.com {
-    handle_path /identity/* {
-        reverse_proxy 127.0.0.1:8081
-    }
-    handle /groups/* {
-        reverse_proxy 127.0.0.1:8095
-    }
-    handle /api/v1/tunnel/* {
-        reverse_proxy 127.0.0.1:8095
-    }
-    handle /api/v1/relay/* {
-        reverse_proxy 127.0.0.1:8095
-    }
-    handle {
-        root * /srv/community/frontend/dist
-        try_files {path} /index.html
-        file_server
-    }
+    reverse_proxy 127.0.0.1:8098
 }
 ```
 
@@ -95,3 +79,14 @@ community.example.com {
 该原型的中继队列不持久化，连接端逐个处理请求；服务重启时尚未完成的请求会失败。暂无多连接负载分担、跨中继故障转移或 WebSocket/SSE 透传。已实现的 HTTP 讨论、回复、成员心跳、节点复制可通过中继传输。
 
 真实跨网络验收需要部署者提供可访问的公网服务器、域名和 HTTPS，并从不同网络的两台设备测试。当前已使用本机主机加 Cloudflare 临时隧道接通真实公网 HTTPS 入口，并通过主机经公网边缘执行双用户交流测试；独立网络设备验收尚待手机移动网络执行。
+
+
+## 管理员控制公网访问
+
+默认公网访问关闭。管理员在本机 http://127.0.0.1:5173 的管理后台启用开关，并生成一次性邀请。填写当前公网 HTTPS 地址后可以复制含片段凭证的邀请链接。凭证位于 # 之后，不随初次 HTTP 请求发送；入口页读取后立即清除地址中的凭证。兑换成功设置 Secure、HttpOnly、SameSite=Strict 的访问 Cookie，原始会话凭证不返回给页面脚本。邀请有效期为 1–168 小时，每个邀请只能兑换一次，会话最长 8 小时且不超过邀请到期时间。邀请和会话在数据库中仅存摘要。
+
+公网网关在每次页面、静态资源和接口请求时验证访问会话，无有效邀请、开关关闭、邀请撤销/过期、验证服务不可用时拒绝放行。关闭开关更新会话版本，随后重新开启不会恢复旧会话。最后一个有效邀请撤销后，入口保持关闭。已经在浏览器展示的内容无法远程收回，新的请求会被拒绝。访问兑换全入口每分钟最多 30 次尝试。
+
+公网主机连接端通过 /api/v1/tunnel/{group}/poll 和 replies 使用独立中继凭证；这些机器接口仅在公网策略有效时转发，并由中继核验对应组凭证。其他 API 不能沿用此例外。远程副本在节点凭证之外需要携带 X-Public-Access 访问会话。start-replica.ps1 支持额外的 -PublicInvite 参数，将一次性公网邀请兑换后仅把会话放入副本进程环境；过期后需重新兑换新邀请。也可通过 REPLICA_PUBLIC_ACCESS_SESSION 配置会话。身份服务内部验证接口不通过公网发布。
+
+本机管理员可在公网关闭时继续管理。start-dev 默认将前后端仅绑定 127.0.0.1。切换私有模式：`pwsh -File scripts/start-private.ps1`，停止公网相关进程并以本机绑定重新启动社区。指定局域网接口时传入 `-BindAddress <本机局域网IP>`；此模式仍不启动公网隧道。当前实现为同一部署的访问与运行模式隔离，独立数据库和正式 PC 安装包尚未交付。

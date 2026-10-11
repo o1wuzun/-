@@ -1,7 +1,14 @@
+param([string]$BindAddress='127.0.0.1')
 $ErrorActionPreference = 'Stop'
+$parsedAddress=$null
+if(![System.Net.IPAddress]::TryParse($BindAddress,[ref]$parsedAddress)){throw 'BindAddress must be a local IP address.'}
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $dataRoot = Join-Path $projectRoot 'data'
 New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
+$gatewayKeyPath=Join-Path $dataRoot 'gateway-key.txt'
+if(!(Test-Path -LiteralPath $gatewayKeyPath)){$gatewayBytes=New-Object byte[] 32;[System.Security.Cryptography.RandomNumberGenerator]::Fill($gatewayBytes);[Convert]::ToBase64String($gatewayBytes)|Set-Content -LiteralPath $gatewayKeyPath}
+$env:PUBLIC_ACCESS_GATEWAY_KEY=(Get-Content -LiteralPath $gatewayKeyPath -Raw).Trim()
+$env:SERVER_ADDRESS=$BindAddress
 $keysPath = Join-Path $dataRoot 'dev-keys.json'
 if (!(Test-Path -LiteralPath $keysPath)) {
     $rsa = [System.Security.Cryptography.RSA]::Create(2048)
@@ -35,6 +42,7 @@ $env:GROUP_NAME='算法基础学习组'
 $identity = Start-Process java -ArgumentList @('-jar',('"'+$identityJar+'"')) -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'identity.out.log') -RedirectStandardError (Join-Path $dataRoot 'identity.err.log')
 # Private signing material belongs exclusively to the identity process.
 Remove-Item Env:IDENTITY_PRIVATE_KEY
+Remove-Item Env:PUBLIC_ACCESS_GATEWAY_KEY
 $group = Start-Process java -ArgumentList @('-jar',('"'+$groupJar+'"')) -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'group.out.log') -RedirectStandardError (Join-Path $dataRoot 'group.err.log')
 $env:GROUP_PORT='8083'
 $env:GROUP_ID='group-contest'
@@ -42,7 +50,7 @@ $env:GROUP_NAME='算法竞赛练习组'
 $env:GROUP_DB_URL='jdbc:h2:file:./data/group-contest'
 $env:GROUP_JOIN_KEY=$keys.contest_join_key
 $contest = Start-Process java -ArgumentList @('-jar',('"'+$groupJar+'"')) -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'contest.out.log') -RedirectStandardError (Join-Path $dataRoot 'contest.err.log')
-$web = Start-Process node -ArgumentList @(('"'+$viteScript+'"'),'--host','127.0.0.1') -WorkingDirectory (Join-Path $projectRoot 'frontend') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'web.out.log') -RedirectStandardError (Join-Path $dataRoot 'web.err.log')
+$web = Start-Process node -ArgumentList @(('"'+$viteScript+'"'),'--host',$BindAddress) -WorkingDirectory (Join-Path $projectRoot 'frontend') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'web.out.log') -RedirectStandardError (Join-Path $dataRoot 'web.err.log')
 @{identity=$identity.Id;group=$group.Id;contest=$contest.Id;web=$web.Id} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $dataRoot 'dev-processes.json')
-Write-Output 'Development processes launched. Frontend: http://127.0.0.1:5173'
+Write-Output 'Development processes launched. Frontend uses the selected local bind address on port 5173'
 Write-Output 'Local-only development invite key: data/dev-keys.json (join_key). Do not publish this file.'

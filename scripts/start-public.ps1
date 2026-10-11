@@ -28,7 +28,7 @@ function Launch($executable,$arguments,$name,$artifact){
 }
 function StartJava($module,$name){$jar=Join-Path $projectRoot "services/$module/target/$module-0.1.0-SNAPSHOT.jar";if(!(Test-Path -LiteralPath $jar)){throw 'Build Maven modules first.'};Launch 'java' @('-jar',('"'+$jar+'"')) $name $jar}
 function Ready($url){for($i=0;$i -lt 45;$i++){try{Invoke-RestMethod $url -TimeoutSec 2|Out-Null;return}catch{Start-Sleep -Seconds 1}};throw "Service not ready: $url"}
-$names=@('RELAY_CREDENTIALS','RELAY_PORT','SERVER_ADDRESS','TUNNEL_RELAY_URL','TUNNEL_GROUP_ID','TUNNEL_CREDENTIAL','TUNNEL_SOURCE_URL','TUNNEL_PORT')
+$names=@('RELAY_CREDENTIALS','RELAY_PORT','SERVER_ADDRESS','TUNNEL_RELAY_URL','TUNNEL_GROUP_ID','TUNNEL_CREDENTIAL','TUNNEL_SOURCE_URL','TUNNEL_PORT','PUBLIC_ACCESS_GATEWAY_KEY')
 $saved=@{};foreach($name in $names){$saved[$name]=[Environment]::GetEnvironmentVariable($name,'Process')}
 try{
  $env:RELAY_CREDENTIALS=$keys|ConvertTo-Json -Compress;$env:RELAY_PORT='8095';$env:SERVER_ADDRESS='127.0.0.1'
@@ -40,9 +40,13 @@ try{
  }
  # Public gateway and Cloudflare need no relay credentials in their environment.
  Remove-Item Env:RELAY_CREDENTIALS,Env:TUNNEL_CREDENTIAL -ErrorAction SilentlyContinue
+ $keyPath=Join-Path $dataRoot 'gateway-key.txt'
+ if(!(Test-Path -LiteralPath $keyPath)){throw 'Restart community services with the updated start-dev script first.'}
+ $env:PUBLIC_ACCESS_GATEWAY_KEY=(Get-Content -LiteralPath $keyPath -Raw).Trim()
  $gateway=Join-Path $projectRoot 'scripts/public-gateway.mjs'
  Launch 'node' @(('"'+$gateway+'"')) 'public-gateway' $gateway
- Ready 'http://127.0.0.1:8098/'
+ Ready 'http://127.0.0.1:8098/access'
+ Remove-Item Env:PUBLIC_ACCESS_GATEWAY_KEY
  if($LocalOnly){Write-Output 'Local public gateway ready: http://127.0.0.1:8098';return}
  $cloudflared=Join-Path $dataRoot 'tools/cloudflared.exe'
  if(!(Test-Path -LiteralPath $cloudflared)){throw 'Install official Cloudflare cloudflared at data/tools/cloudflared.exe first.'}
@@ -51,7 +55,7 @@ try{
   $log=Get-Content (Join-Path $dataRoot 'public-cloudflared.err.log') -Raw -ErrorAction SilentlyContinue
   if($log -match 'https://[a-z0-9-]+\.trycloudflare\.com'){
    $candidate=$Matches[0]
-   try{$ready=Invoke-WebRequest 'http://127.0.0.1:19090/ready' -TimeoutSec 2;if($ready.StatusCode -eq 200){$state.url=$candidate;$state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $statePath;Write-Output "Public HTTPS URL: $($state.url)";Write-Output 'Keep this PC awake. Restarting the temporary tunnel can change this address.';return}}catch{}
+   try{$ready=Invoke-WebRequest 'http://127.0.0.1:19090/ready' -TimeoutSec 2;if($ready.StatusCode -eq 200){$state.url=$candidate;$state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $statePath;Write-Output "Public HTTPS URL: $($state.url)";Write-Output 'Access remains locked until the administrator enables it and issues invitations.';Write-Output 'Keep this PC awake. Restarting the temporary tunnel can change this address.';return}}catch{}
   }
   Start-Sleep -Seconds 1
  }
