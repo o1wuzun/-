@@ -55,7 +55,7 @@ try{
   $log=Get-Content (Join-Path $dataRoot 'public-cloudflared.err.log') -Raw -ErrorAction SilentlyContinue
   if($log -match 'https://[a-z0-9-]+\.trycloudflare\.com'){
    $candidate=$Matches[0]
-   try{$ready=Invoke-WebRequest 'http://127.0.0.1:19090/ready' -TimeoutSec 2;if($ready.StatusCode -eq 200){$state.url=$candidate;$state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $statePath;Write-Output "Public HTTPS URL: $($state.url)";Write-Output 'Access remains locked until the administrator enables it and issues invitations.';Write-Output 'Keep this PC awake. Restarting the temporary tunnel can change this address.';return}}catch{}
+   try{$ready=Invoke-WebRequest 'http://127.0.0.1:19090/ready' -TimeoutSec 2;if($ready.StatusCode -eq 200){$state.url=$candidate;$state|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $statePath;Write-Output "Public HTTPS URL: $($state.url)";Write-Output 'Enable public access in the admin panel; no extra invitation key is required.';Write-Output 'Keep this PC awake. Restarting the temporary tunnel can change this address.';return}}catch{}
   }
   Start-Sleep -Seconds 1
  }

@@ -25,20 +25,20 @@ class PublicAccessTest {
  void policy(boolean enabled)throws Exception{mvc.perform(put("/api/v1/admin/public-access").header("Authorization","Bearer "+admin).contentType("application/json").content("{\"enabled\":"+enabled+"}")).andExpect(status().isOk());}
  com.fasterxml.jackson.databind.JsonNode invite()throws Exception{return json.readTree(mvc.perform(post("/api/v1/admin/public-access/invitations").header("Authorization","Bearer "+admin).contentType("application/json").content("{\"name\":\"测试设备\",\"hours\":24}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).path("data");}
  void check(String session,boolean allowed)throws Exception{mvc.perform(post("/api/v1/internal/public-access/check").header("Authorization","Bearer "+KEY).contentType("application/json").content(json.writeValueAsString(Map.of("session",session,"device",false)))).andExpect(status().isOk()).andExpect(jsonPath("$.data.allowed").value(allowed));}
- @Test void defaultClosedOneTimeInvitationsRevocationExpiryAndPrivateAdminAccess()throws Exception{
+ @Test void defaultClosedOpenPublicAccessAndPrivateAdminAccess()throws Exception{
   String user=login("public-user@test.local");admin=login("public-admin@test.local");db.update("UPDATE accounts SET role='ADMIN' WHERE email='public-admin@test.local'");
   mvc.perform(get("/api/v1/admin/public-access").header("Authorization","Bearer "+user)).andExpect(status().isForbidden());
   mvc.perform(post("/api/v1/internal/public-access/check").contentType("application/json").content("{}")).andExpect(status().isUnauthorized());check("",false);
-  policy(true);check("",false);
+  policy(true);check("",true);
   var invitation=invite();String raw=invitation.path("token").asText();assertFalse(db.queryForObject("SELECT token_hash FROM public_access_invites WHERE id=?",String.class,invitation.path("id").asText()).contains(raw));
   mvc.perform(get("/api/v1/admin/public-access").header("Authorization","Bearer "+admin)).andExpect(jsonPath("$.data.invitations[0].TOKEN_HASH").doesNotExist());
   final String redeemToken=raw;var pool=Executors.newFixedThreadPool(2);List<Future<org.springframework.mock.web.MockHttpServletResponse>> results=new ArrayList<>();
   try{for(int i=0;i<2;i++)results.add(pool.submit(()->mvc.perform(post("/api/v1/internal/public-access/exchange").header("Authorization","Bearer "+KEY).contentType("application/json").content(json.writeValueAsString(Map.of("token",redeemToken)))).andReturn().getResponse()));
    var a=results.get(0).get();var b=results.get(1).get();assertEquals(Set.of(200,403),Set.of(a.getStatus(),b.getStatus()));String session=json.readTree(a.getStatus()==200?a.getContentAsString():b.getContentAsString()).path("data").path("session").asText();check(session,true);
-   mvc.perform(delete("/api/v1/admin/public-access/invitations/"+invitation.path("id").asText()).header("Authorization","Bearer "+admin)).andExpect(status().isOk());check(session,false);
+   mvc.perform(delete("/api/v1/admin/public-access/invitations/"+invitation.path("id").asText()).header("Authorization","Bearer "+admin)).andExpect(status().isOk());check(session,true);
   }finally{pool.shutdownNow();}
-  invitation=invite();raw=invitation.path("token").asText();String session=json.readTree(mvc.perform(post("/api/v1/internal/public-access/exchange").header("Authorization","Bearer "+KEY).contentType("application/json").content(json.writeValueAsString(Map.of("token",raw)))).andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).path("data").path("session").asText();check(session,true);policy(false);check(session,false);policy(true);check(session,false);
-  db.update("UPDATE public_access_invites SET expires_at=0");mvc.perform(post("/api/v1/internal/public-access/check").header("Authorization","Bearer "+KEY).contentType("application/json").content("{\"device\":true}")).andExpect(jsonPath("$.data.allowed").value(false));
+  invitation=invite();raw=invitation.path("token").asText();String session=json.readTree(mvc.perform(post("/api/v1/internal/public-access/exchange").header("Authorization","Bearer "+KEY).contentType("application/json").content(json.writeValueAsString(Map.of("token",raw)))).andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).path("data").path("session").asText();check(session,true);policy(false);check(session,false);policy(true);check(session,true);
+  db.update("UPDATE public_access_invites SET expires_at=0");mvc.perform(post("/api/v1/internal/public-access/check").header("Authorization","Bearer "+KEY).contentType("application/json").content("{\"device\":true}")).andExpect(jsonPath("$.data.allowed").value(true));
   mvc.perform(get("/api/v1/admin/public-access").header("Authorization","Bearer "+admin)).andExpect(status().isOk());
  }
 }

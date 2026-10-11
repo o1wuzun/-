@@ -19,7 +19,7 @@ pwsh -File scripts/start-public.ps1
 
 本地预检可用 `pwsh -File scripts/start-public.ps1 -LocalOnly`，不会建立外部隧道。`pwsh -File scripts/stop-public.ps1` 只停止公网连接、网关、中继和群组连接端，保留社区服务；随后执行 stop-dev 可停止社区。
 
-公网验收：管理员启用访问并生成测试邀请后运行 `pwsh -File scripts/test-public.ps1 -InviteToken <一次性测试邀请>` 经真实公网 HTTPS 入口验证注册登录、入组、两个用户发布回复、组间访问限制及私密文件拒绝。此脚本从主机发出请求，仍需手机关闭 Wi-Fi 后通过移动网络打开显示的 URL，并与电脑上的另一个成员测试讨论回复，才能确认独立网络设备体验。
+公网验收：管理员启用公网访问后运行 `pwsh -File scripts/test-public.ps1` 经真实公网 HTTPS 入口验证注册登录、入组、两个用户发布回复、组间访问限制及私密文件拒绝。此脚本从主机发出请求，仍需手机关闭 Wi-Fi 后通过移动网络打开显示的 URL，并与电脑上的另一个成员测试讨论回复，才能确认独立网络设备体验。
 
 本机公网模式下，顾问仍从本机群组服务读取上下文。外部成员及其他主机的副本可使用 `https://临时域名/groups/group-default` 作为群组源地址；另外的群组主机连接此中继时使用该域名作为 TUNNEL_RELAY_URL，并由主机维护者私下配置独立中继凭证。中继凭证在 `data/relay-keys.json`，它与群组邀请密钥、成员登录和节点复制凭证分别独立，不能公开分享。
 
@@ -90,3 +90,5 @@ community.example.com {
 公网主机连接端通过 /api/v1/tunnel/{group}/poll 和 replies 使用独立中继凭证；这些机器接口仅在公网策略有效时转发，并由中继核验对应组凭证。其他 API 不能沿用此例外。远程副本在节点凭证之外需要携带 X-Public-Access 访问会话。start-replica.ps1 支持额外的 -PublicInvite 参数，将一次性公网邀请兑换后仅把会话放入副本进程环境；过期后需重新兑换新邀请。也可通过 REPLICA_PUBLIC_ACCESS_SESSION 配置会话。身份服务内部验证接口不通过公网发布。
 
 本机管理员可在公网关闭时继续管理。start-dev 默认将前后端仅绑定 127.0.0.1。切换私有模式：`pwsh -File scripts/start-private.ps1`，停止公网相关进程并以本机绑定重新启动社区。指定局域网接口时传入 `-BindAddress <本机局域网IP>`；此模式仍不启动公网隧道。当前实现为同一部署的访问与运行模式隔离，独立数据库和正式 PC 安装包尚未交付。
+
+当前公网入口暂时采用开放访问模式：管理员开启公网访问后无需额外访问密钥；登录、私密群组加入密钥和节点凭证仍正常检查。

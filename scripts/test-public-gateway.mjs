@@ -37,7 +37,7 @@ test('perimeter denies pages and APIs, exchanges Secure cookies and fails closed
   if(req.url.startsWith('/api/v1/internal/public-access/')){
    assert.equal(req.headers.authorization,'Bearer '+'x'.repeat(32))
    const data=JSON.parse(body)
-   if(req.url.endsWith('/check'))return res.end(JSON.stringify({data:{enabled,allowed:enabled&&(data.device||data.session==='valid-session')}}))
+   if(req.url.endsWith('/check'))return res.end(JSON.stringify({data:{enabled,allowed:enabled}}))
    if(!enabled||used||data.token!=='single-use-invite'){res.statusCode=403;return res.end(JSON.stringify({error:{message:'邀请无效'}}))}
    used=true;return res.end(JSON.stringify({data:{session:'valid-session',max_age:3600}}))
   }
@@ -49,8 +49,9 @@ test('perimeter denies pages and APIs, exchanges Secure cookies and fails closed
  try{
   for(const route of ['/','/assets/test.js','/identity/api/v1/auth/login','/groups/group-default/api/v1/group'])assert.equal((await fetch(base+route)).status,403)
   assert.equal(hits,0)
-  assert.match(await(await fetch(base+'/access')).text(),/社区访问邀请/)
+  assert.match(await(await fetch(base+'/access')).text(),/社区公网访问/)
   enabled=true
+  assert.equal((await fetch(base+'/')).status,200)
   const response=await fetch(base+'/access/exchange',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'single-use-invite'})})
   assert.equal(response.status,200);const cookie=response.headers.get('set-cookie');for(const flag of ['HttpOnly','Secure','SameSite=Strict','Path=/'])assert.ok(cookie.includes(flag));assert.ok(!(await response.text()).includes('valid-session'))
   assert.equal((await fetch(base+'/',{headers:{Cookie:cookie}})).status,200)

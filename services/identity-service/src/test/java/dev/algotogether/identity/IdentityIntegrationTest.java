@@ -16,7 +16,7 @@ class IdentityIntegrationTest {
     static String pub,priv;
     static {try{var gen=KeyPairGenerator.getInstance("RSA");gen.initialize(2048);var keys=gen.generateKeyPair();pub=Base64.getEncoder().encodeToString(keys.getPublic().getEncoded());priv=Base64.getEncoder().encodeToString(keys.getPrivate().getEncoded());}catch(Exception e){throw new RuntimeException(e);}}
     @DynamicPropertySource static void properties(DynamicPropertyRegistry r){r.add("identity.public-key",()->pub);r.add("identity.private-key",()->priv);r.add("spring.datasource.url",()->"jdbc:h2:mem:identity-test;DB_CLOSE_DELAY=-1");}
-    @Autowired MockMvc mvc;@Autowired ObjectMapper json;
+    @Autowired MockMvc mvc;@Autowired ObjectMapper json;@Autowired org.springframework.jdbc.core.JdbcTemplate db;
     @Test void directoryContainsIndependentGroups() throws Exception {
         mvc.perform(get("/api/v1/community/groups")).andExpect(status().isOk()).andExpect(jsonPath("$.data.length()").value(2)).andExpect(jsonPath("$.data[0].proxy_path").value("/groups/group-default")).andExpect(jsonPath("$.data[1].id").value("group-contest"));
     }
@@ -37,5 +37,15 @@ class IdentityIntegrationTest {
         mvc.perform(post("/api/v1/community/group-requests").header("Authorization","Bearer "+token).contentType("application/json").content(creation)).andExpect(status().isCreated()).andExpect(jsonPath("$.data.status").value("PENDING"));
         mvc.perform(get("/api/v1/community/group-requests").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data[0].NAME").value("普通用户学习组")).andExpect(jsonPath("$.data[0].VISIBILITY").value("PRIVATE"));
         mvc.perform(get("/api/v1/admin/users").header("Authorization","Bearer "+token)).andExpect(status().isForbidden());
+        String uid=db.queryForObject("SELECT id FROM accounts WHERE email='student@example.com'",String.class);
+        String rid=db.queryForObject("SELECT id FROM group_requests WHERE requested_by=?",String.class,uid);
+        db.update("INSERT INTO deployed_groups(id,request_id,owner_id,name,description,visibility,port,join_key,status) VALUES('owner-test',?,?, '私密群组','测试','PRIVATE',8199,'owner-private-secret','READY')",rid,uid);
+        try {
+          mvc.perform(get("/api/v1/community/group-requests").header("Authorization","Bearer "+token)).andExpect(jsonPath("$.data[0].GROUP_ID").value("owner-test")).andExpect(jsonPath("$.data[0].JOIN_KEY").doesNotExist());
+          mvc.perform(get("/api/v1/community/group-requests/"+rid+"/join-key").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.join_key").value("owner-private-secret"));
+          db.update("INSERT INTO accounts(id,email,nickname,password_hash,role) VALUES('unrelated-admin','other-admin@example.com','admin','unused','ADMIN')");
+          String unrelated=new dev.algotogether.contracts.TokenCodec(pub,priv).issue("unrelated-admin");
+          mvc.perform(get("/api/v1/community/group-requests/"+rid+"/join-key").header("Authorization","Bearer "+unrelated)).andExpect(status().isNotFound());
+        } finally {db.update("DELETE FROM deployed_groups WHERE id='owner-test'");}
     }
 }

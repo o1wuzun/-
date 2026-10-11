@@ -1,11 +1,10 @@
-param([string]$BaseUrl,[Parameter(Mandatory=$true)][string]$InviteToken)
+param([string]$BaseUrl,[string]$InviteToken)
 $ErrorActionPreference='Stop'
 $projectRoot=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 if(!$BaseUrl){$BaseUrl=(Get-Content (Join-Path $projectRoot 'data/public-processes.json') -Raw|ConvertFrom-Json).url}
 if(!$BaseUrl -or ([Uri]$BaseUrl).Scheme -ne 'https'){throw 'Provide the public HTTPS URL.'}
 $BaseUrl=$BaseUrl.TrimEnd('/')
-$exchange=Invoke-WebRequest "$BaseUrl/access/exchange" -Method POST -ContentType 'application/json' -Body (@{token=$InviteToken}|ConvertTo-Json) -TimeoutSec 30
-$accessCookie=($exchange.Headers['Set-Cookie'][0] -split ';')[0]
+$accessCookie='' # Public entry no longer requires an invitation.
 function Call($route,$headers=@{},$method='GET',$body=$null){
  $merged=@{Cookie=$accessCookie};foreach($key in $headers.Keys){$merged[$key]=$headers[$key]}
  $params=@{Uri=$BaseUrl+$route;Method=$method;Headers=$merged;TimeoutSec=45}

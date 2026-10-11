@@ -28,7 +28,7 @@ public class PublicAccessController {
  public record Check(@Size(max=200) String session,boolean device){}
  public record Exchange(@NotBlank @Size(max=200) String token){}
  @GetMapping("/api/v1/admin/public-access")
- Api<?> state(@RequestHeader(value="Authorization",required=false)String h){admin(h);var policy=db.queryForMap("SELECT enabled,generation FROM public_access_policy WHERE id=1");int active=db.queryForObject("SELECT COUNT(*) FROM public_access_invites WHERE revoked=FALSE AND expires_at>?",Integer.class,now());return Api.of(Map.of("enabled",policy.get("ENABLED"),"effective",Boolean.TRUE.equals(policy.get("ENABLED"))&&active>0,"active_invitations",active,"invitations",db.queryForList("SELECT id,name,expires_at,created_at,consumed,revoked FROM public_access_invites ORDER BY created_at DESC")));}
+ Api<?> state(@RequestHeader(value="Authorization",required=false)String h){admin(h);var policy=db.queryForMap("SELECT enabled,generation FROM public_access_policy WHERE id=1");int active=db.queryForObject("SELECT COUNT(*) FROM public_access_invites WHERE revoked=FALSE AND expires_at>?",Integer.class,now());return Api.of(Map.of("enabled",policy.get("ENABLED"),"effective",Boolean.TRUE.equals(policy.get("ENABLED")),"access_mode","OPEN","active_invitations",active,"invitations",db.queryForList("SELECT id,name,expires_at,created_at,consumed,revoked FROM public_access_invites ORDER BY created_at DESC")));}
  @PutMapping("/api/v1/admin/public-access") @Transactional
  Api<?> policy(@RequestHeader(value="Authorization",required=false)String h,@RequestBody Policy r){admin(h);db.queryForMap("SELECT generation FROM public_access_policy WHERE id=1 FOR UPDATE");db.update("UPDATE public_access_policy SET enabled=?,generation=generation+1 WHERE id=1",r.enabled());return state(h);}
  @PostMapping("/api/v1/admin/public-access/invitations") @ResponseStatus(HttpStatus.CREATED)
@@ -36,8 +36,7 @@ public class PublicAccessController {
  @DeleteMapping("/api/v1/admin/public-access/invitations/{id}")
  Api<?> revoke(@RequestHeader(value="Authorization",required=false)String h,@PathVariable String id){admin(h);if(db.update("UPDATE public_access_invites SET revoked=TRUE WHERE id=?",id)==0)throw Api.error(HttpStatus.NOT_FOUND,"邀请不存在");return Api.of(Map.of("revoked",true));}
  @PostMapping("/api/v1/internal/public-access/check")
- Api<?> check(@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Check r){gateway(h);var p=db.queryForMap("SELECT enabled,generation FROM public_access_policy WHERE id=1");boolean enabled=Boolean.TRUE.equals(p.get("ENABLED"))&&db.queryForObject("SELECT COUNT(*) FROM public_access_invites WHERE revoked=FALSE AND expires_at>?",Integer.class,now())>0;boolean allowed=false;
-  if(enabled){if(r.device())allowed=true;else if(r.session()!=null&&!r.session().isBlank())allowed=db.queryForObject("SELECT COUNT(*) FROM public_access_sessions s JOIN public_access_invites i ON s.invite_id=i.id WHERE s.token_hash=? AND s.generation=? AND s.expires_at>? AND i.revoked=FALSE AND i.expires_at>?",Integer.class,hash(r.session()),p.get("GENERATION"),now(),now())>0;}
+ Api<?> check(@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Check r){gateway(h);var p=db.queryForMap("SELECT enabled,generation FROM public_access_policy WHERE id=1");boolean enabled=Boolean.TRUE.equals(p.get("ENABLED"));boolean allowed=enabled;
   return Api.of(Map.of("enabled",enabled,"allowed",allowed));
  }
  @PostMapping("/api/v1/internal/public-access/exchange") @Transactional

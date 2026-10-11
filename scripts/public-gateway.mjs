@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../frontend/dist')
 const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.ico':'image/x-icon', '.woff2':'font/woff2' }
 const cookieName='__Host-community_access'
-const accessPage=`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>社区访问邀请</title><style>body{font-family:system-ui;background:#f5f7fc;padding:8vh 20px;color:#182c4a}main{max-width:440px;margin:auto;padding:30px;background:white;border-radius:16px}input,button{box-sizing:border-box;width:100%;padding:12px;margin-top:14px}button{background:#435de9;color:white;border:0;border-radius:8px}p{line-height:1.7}</style><main><h1>社区访问邀请</h1><p>请输入管理员提供的公网访问邀请。进入后仍需登录，并按群组规则加入。</p><form><label>访问邀请<input name="token" type="password" required maxlength="200" autocomplete="off"></label><button>验证并进入</button></form><p id="message" role="alert"></p><p>未开启公网访问时，请联系管理员。</p></main><script>const input=document.querySelector('input');function loadInvite(){if(location.hash){input.value=location.hash.slice(1);history.replaceState(null,'','/access')}}loadInvite();addEventListener('hashchange',loadInvite);document.querySelector('form').onsubmit=async e=>{e.preventDefault();const button=document.querySelector('button');button.disabled=true;try{const r=await fetch('/access/exchange',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:input.value})});const data=await r.json();if(!r.ok)throw Error(data.error?.message||'验证失败');input.value='';location.replace('/')}catch(e){document.querySelector('#message').textContent=e.message}finally{button.disabled=false}}</script></html>`
+const accessPage=`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>社区公网访问</title><style>body{font-family:system-ui;background:#f5f7fc;padding:8vh 20px;color:#182c4a}main{max-width:440px;margin:auto;padding:30px;background:white;border-radius:16px}button{box-sizing:border-box;width:100%;padding:12px;margin-top:14px;background:#435de9;color:white;border:0;border-radius:8px}p{line-height:1.7}</style><main><h1>社区公网访问</h1><p>当前公网入口不需要额外访问密钥。进入后仍需登录，并按群组规则加入。</p><button onclick="location.replace('/')">进入社区</button><p id="message" role="alert"></p></main></html>`
 export function createGateway({ identityPort=8081, relayPort=8095, staticRoot=root, gatewayKey=process.env.PUBLIC_ACCESS_GATEWAY_KEY||'' }={}) {
  let attempts=0,windowStart=Date.now()
  const internal=async(action,body)=>{
@@ -43,8 +43,8 @@ export function createGateway({ identityPort=8081, relayPort=8095, staticRoot=ro
    if(permit.status!==200)return fail(503,'访问验证服务暂不可用')
    if(!permit.body.data?.allowed){
     res.setHeader('Set-Cookie',`${cookieName}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`)
-    if(req.method==='GET'&&(req.headers.accept||'').includes('text/html')){res.writeHead(303,{Location:'/access','Cache-Control':'no-store'});res.end();return}
-    return fail(403,permit.body.data?.enabled?'请先兑换管理员发放的访问邀请':'公网访问未开启或没有有效邀请')
+
+    return fail(403,'公网访问尚未开启')
    }
    if(url.pathname.startsWith('/identity/api/v1/internal/'))return fail(404,'未找到接口')
    const identity=url.pathname.startsWith('/identity/api/v1/')
