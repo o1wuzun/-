@@ -32,6 +32,8 @@ public class GroupController {
     @PostMapping("/discussions/{post}/comments") @Transactional @ResponseStatus(HttpStatus.CREATED)
     Api<?> comment(@PathVariable String post,@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Comment r){String user=member(h);discussionExists(post);String id=UUID.randomUUID().toString(),time=Instant.now().toString();db.update("INSERT INTO comments VALUES(?,?,?,?,?)",id,post,user,r.body(),time);event("comment_created",Map.of("id",id,"discussion_id",post,"author_id",user,"body",r.body(),"created_at",time));return Api.of(Map.of("id",id));}
     @GetMapping Api<?> info(){return Api.of(Map.of("id",id,"name",name,"description",description,"visibility",visibility,"mode","independent-group-service"));}
+    @GetMapping("/replies/me")
+    Api<?> myReplies(@RequestHeader(value="Authorization",required=false)String h){String user=member(h);return Api.of(db.query("SELECT c.id,c.discussion_id,c.body,c.created_at,d.title,m.nickname FROM comments c JOIN discussions d ON d.id=c.discussion_id JOIN members m ON m.user_id=c.author_id WHERE c.author_id<>? AND (d.author_id=? OR EXISTS(SELECT 1 FROM comments mine WHERE mine.discussion_id=d.id AND mine.author_id=? AND mine.created_at<c.created_at)) ORDER BY c.created_at DESC LIMIT 20",(r,n)->Map.of("id",r.getString("id"),"discussion_id",r.getString("discussion_id"),"body",r.getString("body"),"created_at",r.getString("created_at"),"title",r.getString("title"),"nickname",r.getString("nickname")),user,user,user));}
     @PostMapping("/join") @Transactional
     Api<?> join(@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Join r){
         String user=tokens.verify(h);
