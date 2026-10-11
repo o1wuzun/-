@@ -1,5 +1,7 @@
 # 目标驱动的算法学习社区
 
+**当前 Spring Boot + Vue 3 版本：** 先看 [使用手册与局域网步骤](docs/USER-MANUAL.md)。本机入口为 `http://127.0.0.1:5173/`；已有配置的服务器可用 `pwsh -File scripts/start-private.ps1 -BindAddress 0.0.0.0 -Database mysql` 切换到局域网模式，成员使用服务器 IPv4 地址访问 5173 端口。下面的 Python 启动章节仅用于旧原型。
+
 正在迁移到 Spring Boot + Vue 3。新增代码在 `services/`、`frontend/`；启动步骤、已实现范围和后续拆分计划见 [迁移说明](docs/MIGRATION.md)。Python 原型保留在 `app/`，以下步骤用于旧原型。
 
 Spring/Vue 版本已支持审批站内反馈、RabbitMQ 异步邮件、失败重试和投递状态查询，运行与 SMTP 配置见 [通知说明](docs/NOTIFICATIONS.md)。本机测试邮箱仅捕获邮件。
