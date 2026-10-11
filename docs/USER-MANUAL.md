@@ -2,6 +2,8 @@
 
 本手册对应当前 Spring/Vue 版本，入口端口是 **5173**。README 后半部分中的 8000 端口属于旧 Python 原型。
 
+如果终端提示无法识别 `pwsh`，在项目目录执行 `./start-public.cmd` 启动公网，或 `./start-private.cmd -Database mysql` 启动本机服务。局域网使用 `./start-private.cmd -BindAddress 0.0.0.0 -Database mysql`。这些入口自动寻找已安装或 Codex 自带的 PowerShell 7，无需修改系统环境变量。公网仍要求社区服务先启动；停止公网可运行 `./stop-public.cmd`。
+
 ## 1. 谁需要安装项目
 
 选一台电脑作为主机服务器，运行前端、身份服务、各群组服务和数据库。其他成员的电脑、手机只需浏览器，不需要安装 Java、MySQL 或复制项目。
