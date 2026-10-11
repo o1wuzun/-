@@ -26,8 +26,31 @@ public class RelayController {
  private final long waitSeconds;
  public RelayController(ObjectMapper json,@Value("${relay.credentials}")String config,@Value("${relay.request-timeout-seconds:20}")long waitSeconds)throws Exception{
   this.waitSeconds=waitSeconds;
-  credentials=Map.copyOf(json.readValue(config,new TypeReference<Map<String,String>>(){}));
+  credentials=new ConcurrentHashMap<>(json.readValue(config,new TypeReference<Map<String,String>>(){}));
   for(var entry:credentials.entrySet()){if(!entry.getKey().matches("[a-zA-Z0-9-]{1,80}")||entry.getValue().length()<24)throw new IllegalArgumentException("Relay credentials require valid group IDs and keys of at least 24 characters");channels.put(entry.getKey(),new Channel());}
+ }
+ @Value("${relay.management-key:}") private String managementKey="";
+ @Value("${relay.registry-file:data/remote-relay-registry.json}") private String registryFile;
+ @jakarta.annotation.PostConstruct void restoreRegistry() throws Exception {
+  var file=java.nio.file.Path.of(registryFile);
+  if(java.nio.file.Files.exists(file)){
+   var saved=new ObjectMapper().readValue(java.nio.file.Files.readString(file),new TypeReference<Map<String,String>>(){});
+   for(var e:saved.entrySet()){validateRemote(e.getKey(),e.getValue());credentials.put(e.getKey(),e.getValue());channels.put(e.getKey(),new Channel());}
+  }
+ }
+ private void validateRemote(String group,String credential){if(!group.matches("remote-[a-f0-9-]{36}")||credential==null||credential.length()<32||credential.length()>100)throw Api.error(HttpStatus.BAD_REQUEST,"无效的远程群组凭证");}
+ public record Registration(String credential){}
+ @PutMapping("/api/v1/internal/relay/{group}")
+ synchronized Api<?> register(@PathVariable String group,@RequestHeader(value="Authorization",required=false)String h,@RequestBody Registration r)throws Exception{
+  String key=managementKey;
+  if(key.isBlank()){var path=java.nio.file.Path.of("data/gateway-key.txt");if(java.nio.file.Files.exists(path))key=java.nio.file.Files.readString(path).trim();}
+  if(key.length()<32||h==null||!MessageDigest.isEqual(("Bearer "+key).getBytes(StandardCharsets.UTF_8),h.getBytes(StandardCharsets.UTF_8)))throw Api.error(HttpStatus.UNAUTHORIZED,"内部注册凭证无效");
+  validateRemote(group,r.credential());
+  if(credentials.containsKey(group)&&!credentials.get(group).equals(r.credential()))throw Api.error(HttpStatus.CONFLICT,"群组凭证不匹配");
+  var saved=new TreeMap<String,String>();credentials.forEach((id,value)->{if(id.startsWith("remote-"))saved.put(id,value);});saved.put(group,r.credential());
+  var file=java.nio.file.Path.of(registryFile).toAbsolutePath();java.nio.file.Files.createDirectories(file.getParent());var tmp=java.nio.file.Files.createTempFile(file.getParent(),"registry-",".tmp");
+  try{java.nio.file.Files.writeString(tmp,new ObjectMapper().writeValueAsString(saved));java.nio.file.Files.move(tmp,file,java.nio.file.StandardCopyOption.REPLACE_EXISTING);}finally{java.nio.file.Files.deleteIfExists(tmp);}
+  credentials.put(group,r.credential());channels.computeIfAbsent(group,id->new Channel());return Api.of(Map.of("group_id",group,"registered",true));
  }
  private Channel channel(String group){var channel=channels.get(group);if(channel==null)throw Api.error(HttpStatus.NOT_FOUND,"中继群组未配置");return channel;}
  private Channel authenticate(String group,String h){var channel=channel(group);String expected="Bearer "+credentials.get(group);if(h==null||!MessageDigest.isEqual(expected.getBytes(StandardCharsets.UTF_8),h.getBytes(StandardCharsets.UTF_8)))throw Api.error(HttpStatus.UNAUTHORIZED,"中继连接凭证无效");return channel;}

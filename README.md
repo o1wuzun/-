@@ -1,5 +1,7 @@
 # 目标驱动的算法学习社区
 
+群组部署到其他电脑并自动注册公网中继，请看 [远程群组部署说明](docs/远程群组部署.md)。本次运行中服务的更新入口为 `update-project.cmd`，请在原来启动服务的终端运行。
+
 **当前 Spring Boot + Vue 3 版本：** 先看 [使用手册与局域网步骤](docs/USER-MANUAL.md)。本机入口为 `http://127.0.0.1:5173/`；已有配置的服务器可用 `pwsh -File scripts/start-private.ps1 -BindAddress 0.0.0.0 -Database mysql` 切换到局域网模式，成员使用服务器 IPv4 地址访问 5173 端口。下面的 Python 启动章节仅用于旧原型。
 
 正在迁移到 Spring Boot + Vue 3。新增代码在 `services/`、`frontend/`；启动步骤、已实现范围和后续拆分计划见 [迁移说明](docs/MIGRATION.md)。Python 原型保留在 `app/`，以下步骤用于旧原型。

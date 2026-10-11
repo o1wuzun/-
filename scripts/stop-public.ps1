@@ -14,7 +14,7 @@ foreach($entry in $state.entries){
   $proc=Get-CimInstance Win32_Process -Filter "ProcessId=$processId"
   if(!$proc){continue}
   if(!$proc.CommandLine -or !$proc.CommandLine.Contains($entry.artifact)){throw "Process $processId does not match this public service; refusing to stop it."}
-  Stop-Process -Id $processId -ErrorAction SilentlyContinue
+  Stop-Process -Id $processId
  }
 }
 Remove-Item -LiteralPath $statePath

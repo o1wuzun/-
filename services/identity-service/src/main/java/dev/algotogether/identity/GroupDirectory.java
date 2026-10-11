@@ -19,5 +19,5 @@ public class GroupDirectory {
             if(e.id()==null||!e.id().matches("[a-zA-Z0-9-]+")||!ids.add(e.id())||!("/groups/"+e.id()).equals(e.proxy_path()))throw new IllegalArgumentException("Invalid group directory configuration");
         }
     }
-    @GetMapping("/groups") Api<?> groups(){var result=new java.util.ArrayList<Entry>(entries);for(var row:db.queryForList("SELECT id,name,description FROM deployed_groups WHERE status='READY'"))result.add(new Entry((String)row.get("ID"),(String)row.get("NAME"),(String)row.get("DESCRIPTION"),"/groups/"+row.get("ID")));return Api.of(result);}
+    @GetMapping("/groups") Api<?> groups(){var result=new java.util.ArrayList<Entry>(entries);for(var row:db.queryForList("SELECT id,name,description FROM deployed_groups WHERE status='READY'"))result.add(new Entry((String)row.get("ID"),(String)row.get("NAME"),(String)row.get("DESCRIPTION"),"/groups/"+row.get("ID")));for(var row:db.queryForList("SELECT id,name,description FROM remote_groups"))result.add(new Entry((String)row.get("ID"),(String)row.get("NAME"),(String)row.get("DESCRIPTION"),"/groups/"+row.get("ID")));return Api.of(result);}
 }

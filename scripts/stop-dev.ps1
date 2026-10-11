@@ -8,6 +8,7 @@ foreach($entry in $state.PSObject.Properties){
     $proc=Get-CimInstance Win32_Process -Filter "ProcessId=$processId"
     if(!$proc){continue}
     $expected=if($entry.Name -eq 'web'){Join-Path $projectRoot 'frontend/node_modules/vite/bin/vite.js'}elseif($entry.Name -eq 'identity'){Join-Path $projectRoot 'services/identity-service/target/identity-service-0.1.0-SNAPSHOT.jar'}else{Join-Path $projectRoot 'services/group-service/target/group-service-0.1.0-SNAPSHOT.jar'}
+    if(!$proc.CommandLine){throw "Cannot read process $processId ownership. Run stop-dev.ps1 in the terminal that started the services."}
     if(!$proc.CommandLine.Contains($expected)){throw "Process $processId no longer matches the recorded project service. Refusing to stop it."}
     Stop-Process -Id $processId
     Write-Output "Stopped $($entry.Name) process $processId."

@@ -26,7 +26,7 @@ function pageHash(page){return groupPages.includes(page)&&group.value?'#/groups/
 watch(tab,page=>{if(routeReady&&!applyingRoute&&location.hash!==pageHash(page))location.hash=pageHash(page)})
 async function accountRoute(){if(!routeReady)return;applyingRoute=true;try{
  const parts=location.hash.slice(2).split('/');const page=parts[0];
- if(page==='groups'&&parts[1]){const entry=catalog.value.find(e=>e.id===decodeURIComponent(parts[1]));if(!entry){error.value='群组不存在或尚未就绪';tab.value='groups';return}
+ if(page==='groups'&&parts[1]){if(!catalog.value.some(e=>e.id===decodeURIComponent(parts[1]))){try{catalog.value=await request('identity','/community/groups')}catch(e){error.value=e.message}}const entry=catalog.value.find(e=>e.id===decodeURIComponent(parts[1]));if(!entry){error.value='群组不存在或尚未就绪';tab.value='groups';return}
   if(group.value?.id!==entry.id)await chooseGroup(entry);else if(!joined.value)enter();
   const target=parts[2]==='home'||!parts[2]?'group-home':parts[2];if(joined.value&&groupPages.includes(target)){if(target==='advisor'&&tab.value!=='advisor')await openAdvisor();else tab.value=target}
  }else if(['home','groups'].includes(page)){tab.value=page}else if(user.value&&['settings','notifications','learning'].includes(page)){if(page==='settings')populateSettings();tab.value=page}

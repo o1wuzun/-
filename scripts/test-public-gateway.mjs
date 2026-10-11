@@ -22,9 +22,12 @@ test('gateway publishes built assets and forwards only community APIs',async()=>
   assert.equal(seen[0].path,'/api/v1/auth/login');assert.match(seen[0].body,/test/)
   await fetch(base+'/groups/group-default/api/v1/group/discussions?after=1',{headers:{Authorization:'Bearer example'}})
   assert.equal(seen[1].path,'/groups/group-default/api/v1/group/discussions?after=1');assert.equal(seen[1].authorization,'Bearer example')
+  await fetch(base+'/groups/remote-11111111-1111-1111-1111-111111111111/api/v1/group',{headers:{Authorization:'Bearer remote-member'}})
+  assert.equal(seen[2].path,'/groups/remote-11111111-1111-1111-1111-111111111111/api/v1/group');assert.equal(seen[2].authorization,'Bearer remote-member')
+  assert.equal((await fetch(base+'/api/v1/internal/relay/remote-11111111-1111-1111-1111-111111111111',{method:'PUT'})).status,405)
   for(const route of ['/data/dev-keys.json','/.env','/services/identity-service/pom.xml','/identity/private','/api/private','/groups/unknown'])assert.equal((await fetch(base+route)).status,404)
   assert.equal((await fetch(base+'/identity/api/v1/auth/login',{method:'POST',body:'x'.repeat(524289)})).status,413)
-  assert.equal(seen.length,2)
+  assert.equal(seen.length,3)
  }finally{gateway.closeAllConnections();backend.closeAllConnections();await Promise.all([new Promise(r=>gateway.close(r)),new Promise(r=>backend.close(r))]);await rm(root,{recursive:true,force:true})}
 })
 

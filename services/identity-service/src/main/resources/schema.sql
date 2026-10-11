@@ -97,3 +97,8 @@ CREATE TABLE IF NOT EXISTS learning_plans (
  body TEXT NOT NULL, created_at VARCHAR(40) NOT NULL,
  PRIMARY KEY(user_id,learning_day), FOREIGN KEY(user_id) REFERENCES accounts(id)
 );
+CREATE TABLE IF NOT EXISTS remote_groups (
+ id VARCHAR(80) PRIMARY KEY, request_id VARCHAR(36) NOT NULL UNIQUE, owner_id VARCHAR(36) NOT NULL,
+ name VARCHAR(80) NOT NULL, description VARCHAR(500) NOT NULL, visibility VARCHAR(10) NOT NULL,
+ join_key VARCHAR(100) NOT NULL, relay_credential VARCHAR(100) NOT NULL
+);

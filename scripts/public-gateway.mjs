@@ -70,6 +70,7 @@ export function createGateway({ identityPort=8081, relayPort=8095, staticRoot=ro
      upstreamPort=config.port;upstreamPath=local[2]
     }
     const upstream=http.request({host:'127.0.0.1',port:upstreamPort,method:req.method,path:upstreamPath+url.search,headers}, reply=>{
+     if(reply.headers['content-disposition'])res.setHeader('Content-Disposition',reply.headers['content-disposition'])
      res.writeHead(reply.statusCode,{'Content-Type':reply.headers['content-type']||'application/json','Cache-Control':'no-store'})
      reply.pipe(res)
      reply.on('error',()=>res.destroy())
