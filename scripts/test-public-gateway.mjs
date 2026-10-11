@@ -62,3 +62,28 @@ test('perimeter denies pages and APIs, exchanges Secure cookies and fails closed
   await new Promise(r=>backend.close(r));assert.equal((await fetch(base+'/',{headers:{Cookie:cookie}})).status,503)
  }finally{gateway.closeAllConnections();backend.closeAllConnections();await new Promise(r=>gateway.close(r));await rm(root,{recursive:true,force:true})}
 })
+
+test('newly deployed local groups are routed with identity and credential checks',async()=>{
+ const root=await mkdtemp(path.join(os.tmpdir(),'community-local-gateway-'))
+ const id='local-11111111-1111-1111-1111-111111111111';let correct=true
+ const group=http.createServer((req,res)=>{res.setHeader('Content-Type','application/json');if(req.url==='/api/v1/group')return res.end(JSON.stringify({data:{id:correct?id:'wrong-group'}}));res.statusCode=req.headers.authorization==='Bearer member'?200:401;res.end(JSON.stringify({data:{path:req.url}}))})
+ for(let port=8199;port>=8100;port--){try{await new Promise((resolve,reject)=>{group.once('error',reject);group.listen(port,'127.0.0.1',()=>{group.removeListener('error',reject);resolve()})});break}catch(e){if(e.code!=='EADDRINUSE')throw e}}
+ assert.ok(group.listening)
+ const configFile=path.join(root,id+'.json');await writeFile(configFile,JSON.stringify({id,port:group.address().port}))
+ const identity=http.createServer((req,res)=>{res.setHeader('Content-Type','application/json');res.end(JSON.stringify({data:{allowed:true,enabled:true}}))})
+ await new Promise(r=>identity.listen(0,'127.0.0.1',r))
+ const gateway=createGateway({identityPort:identity.address().port,deployedRoot:root,gatewayKey:'x'.repeat(32)})
+ await new Promise(r=>gateway.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+gateway.address().port+'/groups/'+id
+ try{
+  assert.equal((await fetch(base+'/api/v1/group')).status,200)
+  assert.equal((await fetch(base+'/api/v1/group/discussions')).status,401)
+  const ok=await fetch(base+'/api/v1/group/discussions?after=4',{headers:{Authorization:'Bearer member'}})
+  assert.equal(ok.status,200);assert.equal((await ok.json()).data.path,'/api/v1/group/discussions?after=4')
+  correct=false;assert.equal((await fetch(base+'/api/v1/group/discussions')).status,503)
+  await writeFile(configFile,JSON.stringify({id,port:8081}));assert.equal((await fetch(base+'/api/v1/group')).status,404)
+  assert.equal((await fetch(base+'/api/v1/admin/users')).status,404)
+ }finally{
+  for(const server of [gateway,identity,group]){server.closeAllConnections();await new Promise(r=>server.close(r))}
+  await rm(root,{recursive:true,force:true})
+ }
+})

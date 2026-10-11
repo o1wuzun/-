@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../fron
 const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.ico':'image/x-icon', '.woff2':'font/woff2' }
 const cookieName='__Host-community_access'
 const accessPage=`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>社区公网访问</title><style>body{font-family:system-ui;background:#f5f7fc;padding:8vh 20px;color:#182c4a}main{max-width:440px;margin:auto;padding:30px;background:white;border-radius:16px}button{box-sizing:border-box;width:100%;padding:12px;margin-top:14px;background:#435de9;color:white;border:0;border-radius:8px}p{line-height:1.7}</style><main><h1>社区公网访问</h1><p>当前公网入口不需要额外访问密钥。进入后仍需登录，并按群组规则加入。</p><button onclick="location.replace('/')">进入社区</button><p id="message" role="alert"></p></main></html>`
-export function createGateway({ identityPort=8081, relayPort=8095, staticRoot=root, gatewayKey=process.env.PUBLIC_ACCESS_GATEWAY_KEY||'' }={}) {
+export function createGateway({ identityPort=8081, relayPort=8095, staticRoot=root, deployedRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../data/deployed-groups'), gatewayKey=process.env.PUBLIC_ACCESS_GATEWAY_KEY||'' }={}) {
  let attempts=0,windowStart=Date.now()
  const internal=async(action,body)=>{
   if(gatewayKey.length<32)throw Error('missing gateway key')
@@ -56,7 +56,20 @@ export function createGateway({ identityPort=8081, relayPort=8095, staticRoot=ro
     if(!Number.isSafeInteger(size)||size<0||size>524288)return fail(413,'请求内容过大')
     const headers={}
     for(const key of ['authorization','x-node-credential','content-type','content-length'])if(req.headers[key])headers[key]=req.headers[key]
-    const upstream=http.request({host:'127.0.0.1',port:identity?identityPort:relayPort,method:req.method,path:(identity?url.pathname.slice(9):url.pathname)+url.search,headers}, reply=>{
+    let upstreamPort=identity?identityPort:relayPort,upstreamPath=identity?url.pathname.slice(9):url.pathname
+    // Groups deployed on this host need no reverse tunnel; remote groups still use the relay.
+    const local=url.pathname.match(/^\/groups\/(local-[a-f0-9-]{36})(\/api\/v1\/group(?:\/[a-zA-Z0-9_-]+)*)$/)
+    if(url.pathname.startsWith('/groups/local-')){
+     if(!local)return fail(404,'未找到群组接口')
+     let config;try{config=JSON.parse(await readFile(path.join(deployedRoot,local[1]+'.json'),'utf8'))}catch{return fail(404,'本地群组未部署')}
+     if(config.id!==local[1]||!Number.isInteger(config.port)||config.port<8100||config.port>8199)return fail(404,'无效的群组部署配置')
+     try{
+      const probe=await fetch(`http://127.0.0.1:${config.port}/api/v1/group`,{redirect:'error',signal:AbortSignal.timeout(3000)})
+      if(!probe.ok||(await probe.json()).data?.id!==local[1])return fail(503,'群组服务尚未就绪或身份不匹配')
+     }catch{return fail(503,'群组主机离线，请稍后重试')}
+     upstreamPort=config.port;upstreamPath=local[2]
+    }
+    const upstream=http.request({host:'127.0.0.1',port:upstreamPort,method:req.method,path:upstreamPath+url.search,headers}, reply=>{
      res.writeHead(reply.statusCode,{'Content-Type':reply.headers['content-type']||'application/json','Cache-Control':'no-store'})
      reply.pipe(res)
      reply.on('error',()=>res.destroy())
