@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController @RequestMapping("/api/v1/group")
 public class GroupController {
-    private final JdbcTemplate db; private final TokenCodec tokens; private final String id,name,joinKey,owner;
+    private final JdbcTemplate db; private final TokenCodec tokens; private final String id,name,joinKey,owner,visibility,description;
     private final ObjectMapper json;
-    public GroupController(JdbcTemplate db,ObjectMapper json,@Value("${identity.public-key}")String publicKey,@Value("${group.id}")String id,@Value("${group.name}")String name,@Value("${group.join-key}")String joinKey,@Value("${group.owner-id}")String owner){
+    public GroupController(JdbcTemplate db,ObjectMapper json,@Value("${identity.public-key}")String publicKey,@Value("${group.id}")String id,@Value("${group.name}")String name,@Value("${group.join-key}")String joinKey,@Value("${group.owner-id}")String owner,@Value("${group.visibility:PUBLIC}")String visibility,@Value("${group.description:独立算法学习群组}")String description){
         if(joinKey.length()<16)throw new IllegalArgumentException("GROUP_JOIN_KEY must contain at least 16 characters");
-        this.db=db;this.json=json;this.tokens=new TokenCodec(publicKey,null);this.id=id;this.name=name;this.joinKey=joinKey;this.owner=owner;
+        this.db=db;this.json=json;this.tokens=new TokenCodec(publicKey,null);this.id=id;this.name=name;this.joinKey=joinKey;this.owner=owner;this.visibility=visibility;this.description=description;
     }
     private String member(String header){String user=tokens.verify(header);if(db.queryForObject("SELECT COUNT(*) FROM members WHERE user_id=? AND revoked=FALSE",Integer.class,user)==0)throw Api.error(HttpStatus.NOT_FOUND,"尚未加入该群组或成员资格已撤销");return user;}
     private void event(String kind,Object payload){try{db.update("INSERT INTO event_log(event_id,kind,payload,created_at) VALUES(?,?,?,?)",UUID.randomUUID().toString(),kind,json.writeValueAsString(payload),Instant.now().toString());}catch(Exception e){throw new IllegalStateException(e);}}
@@ -31,7 +31,7 @@ public class GroupController {
     Api<?> comments(@PathVariable String post,@RequestHeader(value="Authorization",required=false)String h){member(h);discussionExists(post);return Api.of(db.query("SELECT c.id,c.body,c.created_at,m.nickname FROM comments c JOIN members m ON c.author_id=m.user_id WHERE c.discussion_id=? ORDER BY c.created_at,c.id LIMIT 500",(r,n)->Map.of("id",r.getString("id"),"body",r.getString("body"),"created_at",r.getString("created_at"),"nickname",r.getString("nickname")),post));}
     @PostMapping("/discussions/{post}/comments") @Transactional @ResponseStatus(HttpStatus.CREATED)
     Api<?> comment(@PathVariable String post,@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Comment r){String user=member(h);discussionExists(post);String id=UUID.randomUUID().toString(),time=Instant.now().toString();db.update("INSERT INTO comments VALUES(?,?,?,?,?)",id,post,user,r.body(),time);event("comment_created",Map.of("id",id,"discussion_id",post,"author_id",user,"body",r.body(),"created_at",time));return Api.of(Map.of("id",id));}
-    @GetMapping Api<?> info(){return Api.of(Map.of("id",id,"name",name,"mode","independent-group-service"));}
+    @GetMapping Api<?> info(){return Api.of(Map.of("id",id,"name",name,"description",description,"visibility",visibility,"mode","independent-group-service"));}
     @PostMapping("/join") @Transactional
     Api<?> join(@RequestHeader(value="Authorization",required=false)String h,@Valid @RequestBody Join r){
         String user=tokens.verify(h);

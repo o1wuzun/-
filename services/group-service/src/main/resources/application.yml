@@ -17,3 +17,5 @@ group:
   name: ${GROUP_NAME:算法学习群组}
   join-key: ${GROUP_JOIN_KEY}
   owner-id: ${GROUP_OWNER_ID:}
+  visibility: ${GROUP_VISIBILITY:PUBLIC}
+  description: ${GROUP_DESCRIPTION:独立算法学习群组}
