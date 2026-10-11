@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS group_requests (
  name VARCHAR(80) NOT NULL, description VARCHAR(500) NOT NULL,
  status VARCHAR(20) NOT NULL DEFAULT 'PENDING', created_at VARCHAR(40) NOT NULL,
  visibility VARCHAR(10) NOT NULL DEFAULT 'PUBLIC',
+ deployment_status VARCHAR(20) NOT NULL DEFAULT 'NOT_DEPLOYED', deployed_at VARCHAR(40),
  CONSTRAINT fk_group_requests_user FOREIGN KEY (requested_by) REFERENCES accounts(id)
 );
 CREATE TABLE IF NOT EXISTS advisor_turns (

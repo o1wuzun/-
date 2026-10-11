@@ -1,0 +1,2 @@
+ALTER TABLE group_requests ADD COLUMN deployment_status VARCHAR(20) NOT NULL DEFAULT 'NOT_DEPLOYED';
+ALTER TABLE group_requests ADD COLUMN deployed_at VARCHAR(40) NULL;
