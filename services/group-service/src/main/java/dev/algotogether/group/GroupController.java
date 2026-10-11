@@ -38,7 +38,7 @@ public class GroupController {
         if(!MessageDigest.isEqual(joinKey.getBytes(StandardCharsets.UTF_8),r.join_key().getBytes(StandardCharsets.UTF_8)))throw Api.error(HttpStatus.FORBIDDEN,"联网密钥无效");
         var rows=db.queryForList("SELECT revoked FROM members WHERE user_id=?",user);
         if(!rows.isEmpty()&&Boolean.TRUE.equals(rows.getFirst().get("REVOKED")))throw Api.error(HttpStatus.FORBIDDEN,"成员资格已撤销，请联系群主");
-        db.update("MERGE INTO members(user_id,nickname,host_name,last_seen,revoked) KEY(user_id) VALUES(?,?,?,?,FALSE)",user,r.nickname(),r.host_name(),Instant.now().getEpochSecond());
+        dev.algotogether.persistence.PortableUpsert.execute(db,"UPDATE members SET nickname=?,host_name=?,last_seen=? WHERE user_id=? AND revoked=FALSE",new Object[]{r.nickname(),r.host_name(),Instant.now().getEpochSecond(),user},"INSERT INTO members(user_id,nickname,host_name,last_seen,revoked) VALUES(?,?,?,?,FALSE)",new Object[]{user,r.nickname(),r.host_name(),Instant.now().getEpochSecond()});
         event("member_joined",Map.of("user_id",user,"nickname",r.nickname()));return Api.of(Map.of("group_id",id,"user_id",user));
     }
     @PostMapping("/heartbeat") Api<?> heartbeat(@RequestHeader(value="Authorization",required=false)String h){String u=member(h);db.update("UPDATE members SET last_seen=? WHERE user_id=?",Instant.now().getEpochSecond(),u);return Api.of(Map.of("synced_at",Instant.now().toString()));}

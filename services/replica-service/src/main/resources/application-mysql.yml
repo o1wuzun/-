@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  sql:
+    init:
+      mode: never
+  flyway:
+    enabled: true
+    user: ${DB_MIGRATION_USER}
+    password: ${DB_MIGRATION_PASSWORD}
+    locations: classpath:db/migration/mysql

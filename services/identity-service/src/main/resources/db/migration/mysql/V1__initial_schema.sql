@@ -1,0 +1,9 @@
+CREATE TABLE accounts(id VARCHAR(36) PRIMARY KEY,email VARCHAR(200) NOT NULL UNIQUE,nickname VARCHAR(40) NOT NULL,password_hash VARCHAR(100) NOT NULL,avatar_url VARCHAR(500),role VARCHAR(20) NOT NULL DEFAULT 'USER');
+CREATE TABLE user_settings(user_id VARCHAR(36) PRIMARY KEY,oj_provider VARCHAR(40),oj_api_key VARCHAR(500),advisor_provider VARCHAR(40),advisor_api_key VARCHAR(500),advisor_endpoint VARCHAR(1000),FOREIGN KEY(user_id) REFERENCES accounts(id) ON DELETE CASCADE);
+CREATE TABLE group_requests(id VARCHAR(36) PRIMARY KEY,requested_by VARCHAR(36) NOT NULL,name VARCHAR(80) NOT NULL,description VARCHAR(500) NOT NULL,status VARCHAR(20) NOT NULL DEFAULT 'PENDING',created_at VARCHAR(40) NOT NULL,FOREIGN KEY(requested_by) REFERENCES accounts(id));
+CREATE TABLE advisor_turns(id BIGINT AUTO_INCREMENT PRIMARY KEY,user_id VARCHAR(36) NOT NULL,group_id VARCHAR(80) NOT NULL,question VARCHAR(4000) NOT NULL,answer LONGTEXT NOT NULL,created_at VARCHAR(40) NOT NULL,FOREIGN KEY(user_id) REFERENCES accounts(id));
+CREATE TABLE advisor_generations(user_id VARCHAR(36) NOT NULL,group_id VARCHAR(80) NOT NULL,generation BIGINT NOT NULL DEFAULT 0,PRIMARY KEY(user_id,group_id));
+CREATE TABLE public_access_policy(id INT PRIMARY KEY,enabled BOOLEAN NOT NULL DEFAULT FALSE,generation BIGINT NOT NULL DEFAULT 0);
+INSERT INTO public_access_policy VALUES(1,FALSE,0);
+CREATE TABLE public_access_invites(id VARCHAR(36) PRIMARY KEY,name VARCHAR(80) NOT NULL,token_hash VARCHAR(64) NOT NULL UNIQUE,expires_at BIGINT NOT NULL,created_at BIGINT NOT NULL,consumed BOOLEAN NOT NULL,revoked BOOLEAN NOT NULL);
+CREATE TABLE public_access_sessions(token_hash VARCHAR(64) PRIMARY KEY,invite_id VARCHAR(36) NOT NULL,generation BIGINT NOT NULL,expires_at BIGINT NOT NULL,FOREIGN KEY(invite_id) REFERENCES public_access_invites(id));

@@ -1,6 +1,8 @@
 server:
   port: ${GROUP_PORT:8082}
 spring:
+  flyway:
+    enabled: false
   datasource:
     url: ${GROUP_DB_URL:jdbc:h2:file:./data/group-default}
     username: sa

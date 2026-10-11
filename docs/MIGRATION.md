@@ -5,8 +5,8 @@
 ## 当前已实现
 
 - Maven 多模块，Spring Boot 3.3.5、Java 21，Vue 3 + Vite。
-- identity-service：统一注册登录、BCrypt 密码、RSA 签发一小时身份票据，独立 H2 文件数据库。
-- group-service：一个进程只管理配置的一个群组，独立 H2 数据库，联网密钥加入、成员心跳、成员撤销、群内讨论及事务事件日志。
+- identity-service：统一注册登录、BCrypt 密码、RSA 签发一小时身份票据，支持独立 MySQL 数据库，本机已迁移，H2 保留用于测试和回退。
+- group-service：一个进程只管理配置的一个群组，独立数据库（本机已迁移 MySQL），联网密钥加入、成员心跳、成员撤销、群内讨论及事务事件日志。
 - shared-contracts：响应协议和身份验签，不含共享实体或跨服务数据库访问。
 - Vue 前端：注册登录、当前群组入口、入组、讨论和成员在线状态；刷新登录后尝试心跳恢复成员状态。
 - replica-service：成员主机的只读副本进程，定时按游标拉取群组事件，按 event_id 幂等写入本地 H2，并提供本地状态和强制同步接口。
@@ -66,3 +66,5 @@ pwsh -File scripts/stop-dev.ps1
 中心身份暂时离线时，已有未过期票据可用于群组服务；新的登录需要身份服务恢复。各成员节点离线读缓存、恢复后补传个人记录仍未实现。后续的拆分建议优先调整模块边界，不增加跨服务共享数据库。
 
 原 Python 版本保持在 app/，可继续用 8000 端口运行；Git 标签 prototype-python-v1 和 backups/python-prototype-v1.zip 可用于回退。两个版本当前数据不自动迁移。
+
+本地 MySQL 部署、Flyway 版本迁移、数据核验、备份和回退限制见 [MYSQL.md](MYSQL.md)。

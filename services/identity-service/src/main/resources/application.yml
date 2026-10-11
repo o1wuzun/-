@@ -1,6 +1,8 @@
 server:
   port: ${IDENTITY_PORT:8081}
 spring:
+  flyway:
+    enabled: false
   datasource:
     url: ${IDENTITY_DB_URL:jdbc:h2:file:./data/identity}
     username: sa
