@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS public_access_sessions (
 
 CREATE TABLE IF NOT EXISTS notifications (
  id VARCHAR(36) PRIMARY KEY, user_id VARCHAR(36) NOT NULL, request_id VARCHAR(36) NOT NULL UNIQUE,
- title VARCHAR(200) NOT NULL, body VARCHAR(2000) NOT NULL, created_at VARCHAR(40) NOT NULL, is_read BOOLEAN NOT NULL DEFAULT FALSE,
+ title VARCHAR(200) NOT NULL, body VARCHAR(2000) NOT NULL, created_at VARCHAR(40) NOT NULL, is_read BOOLEAN NOT NULL DEFAULT FALSE, delivered_at VARCHAR(30),
  FOREIGN KEY(user_id) REFERENCES accounts(id), FOREIGN KEY(request_id) REFERENCES group_requests(id)
 );
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id,created_at);

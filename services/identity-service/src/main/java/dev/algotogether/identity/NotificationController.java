@@ -27,7 +27,7 @@ public class NotificationController {
     @GetMapping("/notifications")
     Api<?> list(@RequestHeader(value="Authorization",required=false)String h) {
         String id=account(h,false);
-        return Api.of(db.queryForList("SELECT n.*,m.status AS mail_status FROM notifications n LEFT JOIN mail_jobs m ON m.notification_id=n.id WHERE n.user_id=? ORDER BY n.created_at DESC LIMIT 100",id));
+        return Api.of(db.queryForList("SELECT n.*,n.delivered_at AS delivery_status,m.status AS mail_status FROM notifications n LEFT JOIN mail_jobs m ON m.notification_id=n.id WHERE n.user_id=? ORDER BY n.created_at DESC LIMIT 100",id));
     }
     @GetMapping("/notifications/unread-count")
     Api<?> unread(@RequestHeader(value="Authorization",required=false)String h) {
