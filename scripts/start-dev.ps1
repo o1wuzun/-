@@ -1,7 +1,10 @@
-param([string]$BindAddress='127.0.0.1',[ValidateSet('auto','h2','mysql')][string]$Database='auto')
+param([string]$BindAddress='127.0.0.1',[ValidateSet('auto','h2','mysql')][string]$Database='auto',[string]$WebBindAddress='')
 $ErrorActionPreference = 'Stop'
 $parsedAddress=$null
 if(![System.Net.IPAddress]::TryParse($BindAddress,[ref]$parsedAddress)){throw 'BindAddress must be a local IP address.'}
+if(!$WebBindAddress){$WebBindAddress=$BindAddress}
+$parsedWebAddress=$null
+if(![System.Net.IPAddress]::TryParse($WebBindAddress,[ref]$parsedWebAddress)){throw 'WebBindAddress must be a local IP address.'}
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $dataRoot = Join-Path $projectRoot 'data'
 New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
@@ -84,7 +87,7 @@ $env:GROUP_JOIN_KEY=$keys.contest_join_key
 DatabaseFor 'contest'
 $contest = Start-Process java -ArgumentList @('-jar',('"'+$groupJar+'"')) -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'contest.out.log') -RedirectStandardError (Join-Path $dataRoot 'contest.err.log')
 Remove-Item Env:DB_PASSWORD,Env:DB_MIGRATION_PASSWORD -ErrorAction SilentlyContinue
-$web = Start-Process node -ArgumentList @(('"'+$viteScript+'"'),'--host',$BindAddress) -WorkingDirectory (Join-Path $projectRoot 'frontend') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'web.out.log') -RedirectStandardError (Join-Path $dataRoot 'web.err.log')
+$web = Start-Process node -ArgumentList @(('"'+$viteScript+'"'),'--host',$WebBindAddress) -WorkingDirectory (Join-Path $projectRoot 'frontend') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $dataRoot 'web.out.log') -RedirectStandardError (Join-Path $dataRoot 'web.err.log')
 @{identity=$identity.Id;group=$group.Id;contest=$contest.Id;web=$web.Id} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $dataRoot 'dev-processes.json')
 Write-Output 'Development processes launched. Frontend uses the selected local bind address on port 5173'
 Write-Output 'Local-only development invite key: data/dev-keys.json (join_key). Do not publish this file.'
