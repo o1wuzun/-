@@ -21,6 +21,30 @@ class GroupIntegrationTest {
     @DynamicPropertySource static void properties(DynamicPropertyRegistry r){r.add("identity.public-key",()->pub);r.add("group.join-key",()->"integration-test-join-key");r.add("group.owner-id",()->"owner");r.add("spring.datasource.url",()->"jdbc:h2:mem:group-test");}
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper json;
+    @Autowired org.springframework.jdbc.core.JdbcTemplate db;
+    @Test void directedRepliesAndPrivateMessagesReachOnlyTheirRecipient()throws Exception{
+        var codec=new TokenCodec(pub,priv);String a="Bearer "+codec.issue("target-a"),b="Bearer "+codec.issue("target-b"),c="Bearer "+codec.issue("target-c");
+        for(String h:new String[]{a,b,c})mvc.perform(post("/api/v1/group/join").header("Authorization",h).contentType("application/json").content("{\"join_key\":\"integration-test-join-key\",\"nickname\":\"同伴\",\"host_name\":\"device\"}")).andExpect(status().isOk());
+        String post=json.readTree(mvc.perform(post("/api/v1/group/discussions").header("Authorization",a).contentType("application/json").content("{\"title\":\"公式讨论\",\"body\":\"$n^2$\"}")).andReturn().getResponse().getContentAsString()).path("data").path("id").asText();String path="/api/v1/group/discussions/"+post+"/comments";
+        String first=json.readTree(mvc.perform(post(path).header("Authorization",b).contentType("application/json").content("{\"body\":\"$O(n)$\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).path("data").path("id").asText();
+        mvc.perform(post(path).header("Authorization",c).contentType("application/json").content(json.writeValueAsString(java.util.Map.of("body","回复给 B：$$x^2$$","parent_comment_id",first,"reply_to_user_id","target-b")))).andExpect(status().isCreated());
+        mvc.perform(get("/api/v1/group/replies/me").header("Authorization",b)).andExpect(jsonPath("$.data.length()").value(1)).andExpect(jsonPath("$.data[0].body").value("回复给 B：$$x^2$$"));
+        mvc.perform(get("/api/v1/group/replies/me").header("Authorization",a)).andExpect(jsonPath("$.data.length()").value(1)).andExpect(jsonPath("$.data[0].body").value("$O(n)$"));
+        mvc.perform(get("/api/v1/group/replies/me").header("Authorization",c)).andExpect(jsonPath("$.data.length()").value(0));
+        mvc.perform(get(path).header("Authorization",a)).andExpect(jsonPath("$.data[1].reply_to_user_id").value("target-b")).andExpect(jsonPath("$.data[1].parent_comment_id").value(first));
+        mvc.perform(post(path).header("Authorization",a).contentType("application/json").content(json.writeValueAsString(java.util.Map.of("body","wrong","parent_comment_id",first,"reply_to_user_id","target-c")))).andExpect(status().isBadRequest());
+        mvc.perform(post(path).header("Authorization",a).contentType("application/json").content("{\"body\":\"wrong\",\"reply_to_user_id\":\"outsider\"}")).andExpect(status().isNotFound());
+        String message=json.readTree(mvc.perform(post("/api/v1/group/messages").header("Authorization",b).contentType("application/json").content("{\"recipient_id\":\"target-c\",\"body\":\"PRIVATE-FORMULA $x$\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).path("data").path("id").asText();
+        mvc.perform(get("/api/v1/group/messages/me").header("Authorization",a)).andExpect(jsonPath("$.data.length()").value(0));
+        mvc.perform(get("/api/v1/group/messages/me").header("Authorization",c)).andExpect(jsonPath("$.data[0].sender_id").value("target-b"));
+        mvc.perform(patch("/api/v1/group/messages/"+message+"/read").header("Authorization",a)).andExpect(status().isNotFound());
+        mvc.perform(patch("/api/v1/group/messages/"+message+"/read").header("Authorization",c)).andExpect(status().isNoContent());
+        mvc.perform(get("/api/v1/group/messages/me").header("Authorization",b)).andExpect(jsonPath("$.data[0].is_read").value(true));
+        org.junit.jupiter.api.Assertions.assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM event_log WHERE payload LIKE '%PRIVATE-FORMULA%'",Integer.class));
+        db.update("UPDATE members SET revoked=TRUE WHERE user_id='target-c'");
+        mvc.perform(get("/api/v1/group/messages/me").header("Authorization",c)).andExpect(status().isForbidden());
+        mvc.perform(post("/api/v1/group/messages").header("Authorization",b).contentType("application/json").content("{\"recipient_id\":\"target-c\",\"body\":\"revoked\"}")).andExpect(status().isNotFound());
+    }
     @Test void membershipGatesContentAndRevocationStopsReads() throws Exception {
         var codec=new TokenCodec(pub,priv);String owner="Bearer "+codec.issue("owner"),user="Bearer "+codec.issue("learner");
         mvc.perform(get("/api/v1/group/discussions").header("Authorization",user)).andExpect(status().isNotFound());

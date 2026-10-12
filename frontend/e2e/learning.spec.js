@@ -1,8 +1,9 @@
 import {test,expect} from '@playwright/test'
 import {createServer} from 'node:http'
 import {randomUUID} from 'node:crypto'
+import {readFile} from 'node:fs/promises'
 
-test('personal learning persists and the floating advisor plans from own history',async({page})=>{
+test('group learning persists and the floating advisor plans from group history',async({page})=>{
  const requests=[]
  const model=createServer(async(req,res)=>{
   let body='';for await(const chunk of req)body+=chunk
@@ -24,6 +25,11 @@ test('personal learning persists and the floating advisor plans from own history
   await page.getByLabel('顾问模型名称').fill('fixture-model')
   await page.getByLabel('顾问 API 密钥').fill('browser-fixture-secret')
   await page.getByRole('button',{name:'保存连接设置'}).click()
+  await page.getByRole('button',{name:'◇ 群组入口',exact:true}).click()
+  const keys=JSON.parse(await readFile(new URL('../../data/dev-keys.json',import.meta.url),'utf8'))
+  await page.locator('article').filter({has:page.getByRole('heading',{name:'算法基础学习组',exact:true})}).getByRole('button').click()
+  await page.getByLabel('群主分享的联网密钥').fill(keys.join_key)
+  await page.locator('.dialog').getByRole('button',{name:'确认',exact:true}).click()
   await page.getByRole('button',{name:'✓ 每日学习',exact:true}).click()
   await page.getByLabel('Codeforces 用户名').fill('tourist')
   await page.getByRole('button',{name:'保存绑定',exact:true}).click()
@@ -37,7 +43,17 @@ test('personal learning persists and the floating advisor plans from own history
   await page.getByLabel('复盘与困难').fill('循环边界仍不清楚')
   await page.getByRole('button',{name:'提交今日打卡',exact:true}).click()
   await expect(page.getByText('循环边界仍不清楚',{exact:true})).toBeVisible()
-  await expect(page.getByRole('button',{name:'结算本日',exact:true})).toBeDisabled()
+  await expect(page.getByRole('button',{name:'结算任务',exact:true})).toBeDisabled()
+  await page.getByLabel('知识点目标').fill('并行任务二')
+  await page.getByLabel('Codeforces 题号').fill('71A')
+  await page.getByLabel('理解检查标准').fill('解释字符串边界')
+  await page.getByRole('button',{name:'保存学习点',exact:true}).click()
+  await page.getByRole('combobox',{name:'学习点',exact:true}).selectOption({label:'并行任务二 · 71A'})
+  await page.getByLabel('复盘与困难').fill('第二项任务独立复盘')
+  await page.getByRole('button',{name:'提交今日打卡',exact:true}).click()
+  await expect(page.getByText('第二项任务独立复盘',{exact:true})).toBeVisible()
+  await expect(page.getByText('循环边界仍不清楚',{exact:true})).toBeVisible()
+  await expect(page.getByRole('button',{name:'结算任务',exact:true})).toHaveCount(2)
   await page.getByRole('button',{name:'根据打卡规划明日目标'}).click()
   const popup=page.getByRole('region',{name:'机器人快捷窗口'})
   await expect(popup).toBeVisible()
@@ -53,6 +69,18 @@ test('personal learning persists and the floating advisor plans from own history
   await page.getByRole('button',{name:'✓ 每日学习',exact:true}).click()
   await expect(page.getByText('[测试模型] 明日目标：复习二分不变量，20 分钟边界分析，25 分钟练习。',{exact:true})).toBeVisible()
   await expect(page.getByText('循环边界仍不清楚',{exact:true})).toBeVisible()
+  await page.getByRole('link',{name:'← 退出群组界面',exact:true}).click()
+  await page.locator('article').filter({has:page.getByRole('heading',{name:'算法竞赛练习组',exact:true})}).getByRole('button').click()
+  await page.getByLabel('群主分享的联网密钥').fill(keys.contest_join_key)
+  await page.locator('.dialog').getByRole('button',{name:'确认',exact:true}).click()
+  await page.getByRole('button',{name:'✓ 每日学习',exact:true}).click()
+  await expect(page.getByText('循环边界仍不清楚',{exact:true})).toHaveCount(0)
+  await expect(page.getByText('第二项任务独立复盘',{exact:true})).toHaveCount(0)
+  await expect(page.getByRole('combobox',{name:'学习点',exact:true}).locator('option')).toHaveCount(1)
+  await page.getByRole('link',{name:'← 退出群组界面',exact:true}).click()
+  await page.locator('article').filter({has:page.getByRole('heading',{name:'算法基础学习组',exact:true})}).getByRole('button').click()
+  await page.getByRole('button',{name:'✓ 每日学习',exact:true}).click()
+  await expect(page.getByText('第二项任务独立复盘',{exact:true})).toBeVisible()
   await page.screenshot({path:'test-results/learning-desktop.png',fullPage:true})
   await page.setViewportSize({width:390,height:844})
   await page.getByRole('button',{name:'快速询问机器人'}).click()

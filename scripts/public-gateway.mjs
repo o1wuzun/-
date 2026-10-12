@@ -4,7 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../frontend/dist')
-const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.ico':'image/x-icon', '.woff2':'font/woff2' }
+const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.ico':'image/x-icon', '.woff2':'font/woff2', '.woff':'font/woff', '.ttf':'font/ttf' }
 const cookieName='__Host-community_access'
 const accessPage=`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>社区公网访问</title><style>body{font-family:system-ui;background:#f5f7fc;padding:8vh 20px;color:#182c4a}main{max-width:440px;margin:auto;padding:30px;background:white;border-radius:16px}button{box-sizing:border-box;width:100%;padding:12px;margin-top:14px;background:#435de9;color:white;border:0;border-radius:8px}p{line-height:1.7}</style><main><h1>社区公网访问</h1><p>当前公网入口不需要额外访问密钥。进入后仍需登录，并按群组规则加入。</p><button onclick="location.replace('/')">进入社区</button><p id="message" role="alert"></p></main></html>`
 export function createGateway({ identityPort=8081, relayPort=8095, staticRoot=root, deployedRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../data/deployed-groups'), gatewayKey=process.env.PUBLIC_ACCESS_GATEWAY_KEY||'' }={}) {
