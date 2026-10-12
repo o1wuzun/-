@@ -14,3 +14,5 @@ data/
 .idea/
 frontend/test-results/
 frontend/playwright-report/
+desktop/build/
+releases/

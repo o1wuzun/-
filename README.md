@@ -1,5 +1,7 @@
 # 目标驱动的算法学习社区
 
+**Windows PC Demo：** 已提供便携 EXE 构建脚本，内置运行环境和独立 MySQL。第一版使用桌面启动面板加浏览器业务界面；解压及管理员设置见 [桌面版说明](desktop/README.md)，构建与验收见 [打包说明](docs/PC-DEMO.md)。
+
 **一键切换启动：** 双击 `start-community.cmd` 选择局域网或公网；也可运行 `start-community.cmd -Mode lan` / `start-community.cmd -Mode public`。自动启动数据库、社区及对应网络服务，详见 [使用手册](docs/USER-MANUAL.md)。
 
 群组部署到其他电脑并自动注册公网中继，请看 [远程群组部署说明](docs/远程群组部署.md)。本次运行中服务的更新入口为 `update-project.cmd`，请在原来启动服务的终端运行。

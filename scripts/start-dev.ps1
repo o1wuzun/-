@@ -9,7 +9,7 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $dataRoot = Join-Path $projectRoot 'data'
 New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
 if($Database -eq 'auto'){$modePath=Join-Path $dataRoot 'database-mode.json';$Database=if(Test-Path -LiteralPath $modePath){(Get-Content -LiteralPath $modePath -Raw|ConvertFrom-Json).database}else{'h2'}}
-if($Database -eq 'mysql'){& (Join-Path $PSScriptRoot 'start-mysql.ps1')}
+if($Database -eq 'mysql'){if($env:COMMUNITY_DESKTOP){& (Join-Path $PSScriptRoot 'start-mysql.ps1') -Port 3317}else{& (Join-Path $PSScriptRoot 'start-mysql.ps1')}}
 $gatewayKeyPath=Join-Path $dataRoot 'gateway-key.txt'
 if(!(Test-Path -LiteralPath $gatewayKeyPath)){$gatewayBytes=New-Object byte[] 32;[System.Security.Cryptography.RandomNumberGenerator]::Fill($gatewayBytes);[Convert]::ToBase64String($gatewayBytes)|Set-Content -LiteralPath $gatewayKeyPath}
 $env:PUBLIC_ACCESS_GATEWAY_KEY=(Get-Content -LiteralPath $gatewayKeyPath -Raw).Trim()
@@ -38,6 +38,7 @@ foreach ($port in @(8081,8082,8083,5173)) {
 $identityJar = Join-Path $projectRoot 'services/identity-service/target/identity-service-0.1.0-SNAPSHOT.jar'
 $groupJar = Join-Path $projectRoot 'services/group-service/target/group-service-0.1.0-SNAPSHOT.jar'
 $viteScript = Join-Path $projectRoot 'frontend/node_modules/vite/bin/vite.js'
+if($env:COMMUNITY_DESKTOP){$viteScript=Join-Path $projectRoot 'desktop/web-server.mjs'}
 foreach($file in @($identityJar,$groupJar,$viteScript)) {if(!(Test-Path -LiteralPath $file)){throw "Missing $file. Build the services and install frontend dependencies first."}}
 function DatabaseFor($id){
  if($Database -eq 'mysql'){

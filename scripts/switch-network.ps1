@@ -30,6 +30,7 @@ if($Preview){
  return
 }
 function EnsureArtifacts {
+ if($env:COMMUNITY_DESKTOP){return}
  foreach($command in @('java','node','npm')){Get-Command $command -ErrorAction Stop | Out-Null}
  $modules=@('identity-service','group-service','database-tools')
  if($Mode -eq 'public'){$modules+=@('relay-service','tunnel-client')}
