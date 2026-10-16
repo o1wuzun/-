@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500);
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'USER';
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS achievement_suffix VARCHAR(80);
 CREATE TABLE IF NOT EXISTS user_settings (
  user_id VARCHAR(36) PRIMARY KEY,
  oj_provider VARCHAR(40), oj_api_key VARCHAR(500),
@@ -92,6 +93,37 @@ CREATE TABLE IF NOT EXISTS learning_awards (
  FOREIGN KEY(user_id) REFERENCES accounts(id), FOREIGN KEY(checkin_id) REFERENCES daily_checkins(id)
 );
 CREATE INDEX IF NOT EXISTS idx_learning_points_user ON learning_points(user_id,created_at);
+CREATE TABLE IF NOT EXISTS card_packs (
+ id VARCHAR(36) PRIMARY KEY, user_id VARCHAR(36) NOT NULL, name VARCHAR(80) NOT NULL,
+ description VARCHAR(1000) NOT NULL, created_at VARCHAR(40) NOT NULL,
+ FOREIGN KEY(user_id) REFERENCES accounts(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS cards (
+ id VARCHAR(36) PRIMARY KEY, pack_id VARCHAR(36) NOT NULL, user_id VARCHAR(36) NOT NULL,
+ title VARCHAR(120) NOT NULL, problem_key VARCHAR(40) NOT NULL, prompt VARCHAR(4000) NOT NULL,
+ answer_hint VARCHAR(4000) NOT NULL, difficulty VARCHAR(20) NOT NULL, cf_url VARCHAR(500) NOT NULL,
+ created_at VARCHAR(40) NOT NULL, FOREIGN KEY(pack_id) REFERENCES card_packs(id) ON DELETE CASCADE,
+ FOREIGN KEY(user_id) REFERENCES accounts(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS card_draws (
+ id VARCHAR(36) PRIMARY KEY, pack_id VARCHAR(36) NOT NULL, card_id VARCHAR(36) NOT NULL,
+ user_id VARCHAR(36) NOT NULL, draw_day VARCHAR(10) NOT NULL, created_at VARCHAR(40) NOT NULL,
+ UNIQUE(pack_id,user_id,draw_day), FOREIGN KEY(pack_id) REFERENCES card_packs(id) ON DELETE CASCADE,
+ FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS card_completions (
+ id VARCHAR(36) PRIMARY KEY, card_id VARCHAR(36) NOT NULL, user_id VARCHAR(36) NOT NULL,
+ completed_at VARCHAR(40) NOT NULL, UNIQUE(card_id,user_id), FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS achievements (
+ id VARCHAR(36) PRIMARY KEY, user_id VARCHAR(36) NOT NULL, code VARCHAR(80) NOT NULL,
+ title VARCHAR(120) NOT NULL, description VARCHAR(500) NOT NULL, earned_at VARCHAR(40) NOT NULL,
+ UNIQUE(user_id,code), FOREIGN KEY(user_id) REFERENCES accounts(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS card_credits (
+ user_id VARCHAR(36) PRIMARY KEY, credits INT NOT NULL DEFAULT 0,
+ FOREIGN KEY(user_id) REFERENCES accounts(id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS learning_plans (
  user_id VARCHAR(36) NOT NULL, learning_day VARCHAR(10) NOT NULL,
  body TEXT NOT NULL, created_at VARCHAR(40) NOT NULL,
