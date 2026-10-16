@@ -102,3 +102,10 @@ CREATE TABLE IF NOT EXISTS remote_groups (
  name VARCHAR(80) NOT NULL, description VARCHAR(500) NOT NULL, visibility VARCHAR(10) NOT NULL,
  join_key VARCHAR(100) NOT NULL, relay_credential VARCHAR(100) NOT NULL
 );
+CREATE TABLE IF NOT EXISTS study_jobs (
+ id VARCHAR(36) PRIMARY KEY, user_id VARCHAR(36) NOT NULL, group_id VARCHAR(80) NOT NULL,
+ task_id VARCHAR(36) NOT NULL, reference_id VARCHAR(36) NOT NULL, kind VARCHAR(20) NOT NULL,
+ status VARCHAR(30) NOT NULL, result TEXT NOT NULL, appeal VARCHAR(2000) NOT NULL,
+ created_at VARCHAR(40) NOT NULL, updated_at VARCHAR(40) NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_study_jobs_scope ON study_jobs(user_id,group_id,status);

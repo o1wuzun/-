@@ -22,7 +22,8 @@ public class LocalGroupDeployer {
  @Scheduled(fixedDelay=5000)
  public synchronized void work(){
   if(!enabled)return;
-  for(var r:db.queryForList("SELECT * FROM group_requests WHERE deployment_status='DEPLOYING' ORDER BY created_at LIMIT 1")){
+  // A newly approved deployment should not wait behind every older group recovering after an update.
+  for(var r:db.queryForList("SELECT * FROM group_requests WHERE deployment_status='DEPLOYING' ORDER BY CASE WHEN deployed_at IS NULL THEN 0 ELSE 1 END,created_at LIMIT 1")){
    String request=(String)r.get("ID");
    try{
     var existing=db.queryForList("SELECT * FROM deployed_groups WHERE request_id=?",request);

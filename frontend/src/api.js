@@ -13,7 +13,17 @@ export async function downloadRemoteBundle(id){
 }
 export async function request(service,path,method='GET',body){
  const base=service==='group'?groupPath:`/${service}`
- const response=await fetch(`${base}/api/v1${path}`,{method,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})})
+ return perform(base,token,path,method,body)
+}
+// Capture both scope and identity before async work; a group switch cannot retarget a pending write.
+export function groupRequest(group){
+ const base=group.proxy_path||`/groups/${group.id}`
+ if(!/^\/groups\/[a-zA-Z0-9-]+$/.test(base))throw new Error('无效的群组服务路径')
+ const identity=token
+ return (path,method='GET',body)=>perform(base,identity,path,method,body)
+}
+async function perform(base,identity,path,method,body){
+ const response=await fetch(`${base}/api/v1${path}`,{method,headers:{'Content-Type':'application/json',...(identity?{Authorization:`Bearer ${identity}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})})
  if(response.status===204)return null
  const result=await response.json()
  if(!response.ok)throw new Error(result.error?.message||result.message||'请求失败，请检查服务连接')

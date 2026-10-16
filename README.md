@@ -1,5 +1,7 @@
 # 目标驱动的算法学习社区
 
+**第二版群组学习工作台：** 阶段计划与版本、任务领取调整、草稿与正式提交、检查点补交申诉、私人复习、组内求助和异步 OJ/AI 检查，详见 [第二版使用说明](docs/V2-LEARNING.md)。
+
 **Windows PC Demo：** 已提供便携 EXE 构建脚本，内置运行环境和独立 MySQL。第一版使用桌面启动面板加浏览器业务界面；解压及管理员设置见 [桌面版说明](desktop/README.md)，构建与验收见 [打包说明](docs/PC-DEMO.md)。
 
 **一键切换启动：** 双击 `start-community.cmd` 选择局域网或公网；也可运行 `start-community.cmd -Mode lan` / `start-community.cmd -Mode public`。自动启动数据库、社区及对应网络服务，详见 [使用手册](docs/USER-MANUAL.md)。

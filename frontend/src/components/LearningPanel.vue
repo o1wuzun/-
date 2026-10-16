@@ -1,8 +1,10 @@
 <script setup>
 import {ref,onMounted} from 'vue'
-import {request} from '../api'
+import {request as generalRequest,groupRequest} from '../api'
 import MathText from './MathText.vue'
 const props=defineProps({group:Object})
+const scoped=groupRequest(props.group)
+const request=(service,path,method,body)=>service==='group'?scoped(path,method,body):generalRequest(service,path,method,body)
 const data=ref(null),error=ref(''),busy=ref(false),handle=ref(''),point=ref({title:'',problem_key:'',criterion:''}),checkin=ref({point_id:'',minutes:45,reflection:''})
 const emit=defineEmits(['plan'])
 const legacy=ref(null)

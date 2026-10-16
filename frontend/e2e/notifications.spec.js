@@ -58,7 +58,7 @@ test('requester receives approval feedback and can mark it read',async({browser}
   await groupCard.getByRole('button').click()
   await member.locator('.dialog').getByLabel('群主分享的联网密钥').fill(joinKey)
   await member.locator('.dialog').getByRole('button',{name:'确认',exact:true}).click()
-  await member.getByRole('button',{name:'⌂ 群组首页',exact:true}).click()
+  await member.getByRole('button',{name:'⌂ 概览',exact:true}).click()
   await expect(member.locator('h1')).toHaveText(name)
   await expect(member.locator('.group-home')).toContainText('私密群组')
   await expect(member.getByRole('heading',{name:'群主邀请管理'})).toBeVisible()
