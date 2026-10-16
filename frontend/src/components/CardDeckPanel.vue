@@ -1,0 +1,24 @@
+<script setup>
+import {ref,onMounted} from 'vue'
+import {groupRequest} from '../api'
+import MathText from './MathText.vue'
+const props=defineProps({group:Object,user:Object,compact:Boolean})
+const api=groupRequest(props.group),data=ref({packs:[],cards:[],draws:[]}),error=ref(''),notice=ref(''),busy=ref(false),showCreate=ref(false),showCard=ref('')
+const pack=ref({name:'',description:''}),card=ref({title:'',problem_key:'',prompt:'',answer_hint:'',difficulty:'MEDIUM'}),today=ref(null)
+async function load(){const result=await api('/group/study/cards');data.value=result;today.value=result.draws?.[0]||null}
+async function run(fn){busy.value=true;error.value='';notice.value='';try{await fn();await load()}catch(e){error.value=e.message}finally{busy.value=false}}
+function draw(id){return run(async()=>{const result=await api('/group/study/cards/packs/'+id+'/draw','POST');today.value=result.draw;notice.value=result.already_drawn?'今天已经抽过这套卡包，继续复习这张卡。':'今日卡牌已抽取。'})}
+onMounted(()=>run(load))
+</script>
+<template>
+ <section class="card card-deck-panel" aria-label="今日随机卡牌">
+  <div class="section-head"><div><span class="eyebrow">DAILY CARD</span><h3>今日随机卡牌</h3></div><button class="secondary" :disabled="busy" @click="run(load)">刷新卡包</button></div>
+  <p class="note">卡牌只属于当前群组和你的个人空间；同一套卡包每天固定抽取一张，适合用来安排一个小而明确的练习。</p>
+  <p v-if="error" class="error" role="alert">{{error}}</p><p v-if="notice" class="study-notice" role="status">{{notice}}</p>
+  <article v-if="today" class="daily-card"><small>{{today.DRAW_DAY||today.draw_day}} · {{today.TITLE||today.title}} · {{today.DIFFICULTY||today.difficulty}}</small><h4>{{today.PROBLEM_KEY||today.problem_key}}</h4><MathText :text="today.PROMPT||today.prompt"/><details v-if="today.ANSWER_HINT||today.answer_hint"><summary>查看提示</summary><MathText :text="today.ANSWER_HINT||today.answer_hint"/></details></article>
+  <p v-else class="muted">今天还没有抽卡。先创建一个卡包并添加题目。</p>
+  <div class="deck-list"><article v-for="p in data.packs" :key="p.ID" class="deck-item"><div><strong>{{p.NAME}}</strong><small>{{p.DESCRIPTION||'个人练习卡包'}} · {{data.cards.filter(c=>c.PACK_ID===p.ID).length}} 张卡牌</small></div><div class="study-actions"><button class="secondary" :disabled="busy" @click="draw(p.ID)">抽取今日卡牌</button><button class="secondary" :disabled="busy" @click="showCard=showCard===p.ID?'':p.ID">添加题目</button></div><form v-if="showCard===p.ID" @submit.prevent="run(async()=>{await api('/group/study/cards/packs/'+p.ID+'/cards','POST',card);card={title:'',problem_key:'',prompt:'',answer_hint:'',difficulty:'MEDIUM'};showCard=''})"><label>卡牌标题<input v-model="card.title" required maxlength="120"></label><label>题号 / 题目标识<input v-model="card.problem_key" required maxlength="80"></label><label>题目提示<textarea v-model="card.prompt" required maxlength="4000"></textarea></label><label>答案提示<textarea v-model="card.answer_hint" maxlength="4000"></textarea></label><label>难度<select v-model="card.difficulty"><option>EASY</option><option>MEDIUM</option><option>HARD</option></select></label><button :disabled="busy">保存卡牌</button></form></article></div>
+  <button v-if="!showCreate" class="secondary" :disabled="busy" @click="showCreate=true">＋ 新建个人卡包</button><form v-else class="deck-create" @submit.prevent="run(async()=>{await api('/group/study/cards/packs','POST',pack);pack={name:'',description:''};showCreate=false})"><h4>新建卡包</h4><label>卡包名称<input v-model="pack.name" required maxlength="80" placeholder="例如：二分边界每日练习"></label><label>卡包说明<textarea v-model="pack.description" maxlength="1000" placeholder="说明这套卡包适合什么阶段"></textarea></label><div class="study-actions"><button :disabled="busy">创建卡包</button><button type="button" class="secondary" @click="showCreate=false">取消</button></div></form>
+ </section>
+</template>
+<style scoped>.card-deck-panel{margin:20px 0}.daily-card{background:linear-gradient(135deg,#fff8e8,#fff);border:1px solid #f1d69a;border-radius:12px;padding:18px;margin:16px 0}.daily-card h4{font-size:22px;margin:8px 0}.daily-card small,.deck-item small{display:block;color:#6d7890}.deck-list{display:grid;gap:10px;margin:14px 0}.deck-item{border:1px solid #e3e8f1;border-radius:10px;padding:14px}.deck-item form,.deck-create{margin-top:14px;padding-top:14px;border-top:1px solid #e5eaf3}.deck-item{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.deck-item form{flex-basis:100%}.deck-item:has(form){flex-wrap:wrap}@media(max-width:650px){.deck-item{display:block}.deck-item .study-actions{margin-top:10px}}</style>
